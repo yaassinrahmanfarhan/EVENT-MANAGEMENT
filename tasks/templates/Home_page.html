@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Event Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="relative min-h-screen">
+
+    <!-- Background image -->
+    <div class="absolute inset-0 bg-[url('https://w0.peakpx.com/wallpaper/697/411/HD-wallpaper-blue-lake-mountains-dark-amoled-trees-sky-scene-sunset-park.jpg')] bg-cover bg-center z-0"></div>
+
+    <!-- Darker overlay -->
+    <div class="absolute inset-0 bg-black opacity-70 z-10"></div>
+
+    <!-- Foreground content -->
+    <div class="relative z-20">
+        <header>
+            <headermain>
+                <!-- nav bar -->
+                <nav class="bg-gray-800 p-4">
+                    <div class="container mx-auto flex justify-between items-center">
+                        <a href="#" class="text-white text-lg font-semibold">LOGO</a>
+                        <div class="space-x-4">
+                            <a href="#" class="text-gray-300 hover:text-white">Home</a>
+                            <a href="#" class="text-gray-300 hover:text-white">Dashboard</a>
+                            <a href="#" class="text-gray-300 hover:text-white">About</a>
+                            <a href="#" class="text-gray-300 hover:text-white">Services</a>
+                            <a href="#" class="text-gray-300 hover:text-white">Contact</a>
+                        </div>
+                    </div>
+                </nav>
+
+                <!-- Banner with Background Image -->
+                <div class="relative bg-transparent h-screen w-full">
+                    <div class="absolute inset-0 flex flex-col justify-center items-center">
+                        <!-- Welcome Text -->
+                        <h1 class="text-white text-4xl font-bold mb-2">
+                            Welcome to EVENT Management
+                        </h1>
+                        
+                        <!-- Created by -->
+                        <div class="flex justify-center w-full mb-6">
+                            <p class="text-white text-sm">
+                                Created By Farhan
+                            </p>
+                        </div>
+                        
+                        <!-- Search Bar -->
+                        <div class="bg-gray-800 p-4 w-1/2 mx-auto rounded-lg shadow-lg opacity-75 mt-6">
+                            <div class="flex justify-center">
+                                <input type="text" placeholder="Search..." class="px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                                <button class="ml-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">Search</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </headermain>
+        </header>
+
+        <!-- Event Section -->
+        <section class="my-12 px-6">
+            <h2 class="text-3xl font-semibold text-center mb-8 text-white">Upcoming Events</h2>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Event Box 1 -->
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1521747116042-5a810fda9664?crop=entropy&cs=tinysrgb&fit=max&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&ixlib=rb-4.0.3&q=80&w=400" alt="Event 1" class="w-full h-48 object-cover" />
+                    <div class="p-4">
+                        <h3 class="text-xl font-semibold">Event Name 1</h3>
+                        <p class="text-gray-700 mt-2">This is a short description of Event 1. It will give participants an overview of what the event is about.</p>
+                        <div class="flex justify-between items-center mt-4">
+                            <span class="text-gray-500">Participants: 150</span>
+                            <span class="text-gray-500">Location: New York</span>
+                        </div>
+                        <button class="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">View Details</button>
+                    </div>
+                </div>
+                
+                <!-- Event Box 2 -->
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1533083253323-28f92b2fe989?crop=entropy&cs=tinysrgb&fit=max&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&ixlib=rb-4.0.3&q=80&w=400" alt="Event 2" class="w-full h-48 object-cover" />
+                    <div class="p-4">
+                        <h3 class="text-xl font-semibold">Event Name 2</h3>
+                        <p class="text-gray-700 mt-2">This is a short description of Event 2. Join us for a day of networking and growth.</p>
+                        <div class="flex justify-between items-center mt-4">
+                            <span class="text-gray-500">Participants: 200</span>
+                            <span class="text-gray-500">Location: London</span>
+                        </div>
+                        <button class="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">View Details</button>
+                    </div>
+                </div>
+
+                <!-- Event Box 3 -->
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1532398011470-098b798b4471?crop=entropy&cs=tinysrgb&fit=max&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&ixlib=rb-4.0.3&q=80&w=400" alt="Event 3" class="w-full h-48 object-cover" />
+                    <div class="p-4">
+                        <h3 class="text-xl font-semibold">Event Name 3</h3>
+                        <p class="text-gray-700 mt-2">Join us for Event 3 to explore new opportunities in the tech world.</p>
+                        <div class="flex justify-between items-center mt-4">
+                            <span class="text-gray-500">Participants: 120</span>
+                            <span class="text-gray-500">Location: San Francisco</span>
+                        </div>
+                        <button class="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">View Details</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="bg-gray-900 text-white py-8 mt-12">
+            <div class="container mx-auto px-4">
+                <div class="flex flex-col md:flex-row justify-between items-center">
+                    <!-- Logo / Name -->
+                    <div class="mb-4 md:mb-0 text-center md:text-left">
+                        <h2 class="text-lg font-bold">EVENT Management</h2>
+                        <p class="text-sm text-gray-400">Organizing your dreams, one event at a time.</p>
+                    </div>
+
+                    <!-- Navigation Links -->
+                    <div class="flex space-x-6 mb-4 md:mb-0">
+                        <a href="#" class="hover:text-gray-300 text-sm">Home</a>
+                        <a href="#" class="hover:text-gray-300 text-sm">About</a>
+                        <a href="#" class="hover:text-gray-300 text-sm">Services</a>
+                        <a href="#" class="hover:text-gray-300 text-sm">Contact</a>
+                    </div>
+
+                    <!-- Socials or Credit -->
+                    <div class="text-sm text-gray-400 text-center md:text-right">
+                        <p>Created by Farhan &copy; 2025</p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>
