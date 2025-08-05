@@ -1,0 +1,36 @@
+{% extends "Navbar&footer.html" %}
+{% block title %}Contact Us{% endblock title %}
+{% block tasks %}
+
+
+    <!-- Contact Section -->
+    <section class="py-16 px-4 max-w-3xl mx-auto">
+      <h1 class="text-4xl font-bold text-white text-center mb-8">Contact Us</h1>
+      
+      <form class="bg-white bg-opacity-90 p-8 rounded-lg shadow-lg">
+        <div class="mb-4">
+          <label class="block text-gray-700 font-semibold mb-2" for="name">Name</label>
+          <input type="text" id="name" placeholder="Your Name" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required />
+        </div>
+
+        <div class="mb-4">
+          <label class="block text-gray-700 font-semibold mb-2" for="email">Email</label>
+          <input type="email" id="email" placeholder="Your Email" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required />
+        </div>
+
+        <div class="mb-4">
+          <label class="block text-gray-700 font-semibold mb-2" for="subject">Subject</label>
+          <input type="text" id="subject" placeholder="Subject" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required />
+        </div>
+
+        <div class="mb-6">
+          <label class="block text-gray-700 font-semibold mb-2" for="message">Message</label>
+          <textarea id="message" rows="5" placeholder="Write your message here..." class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required></textarea>
+        </div>
+
+        <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">Send Message</button>
+      </form>
+    </section>
+
+
+{% endblock tasks %}
