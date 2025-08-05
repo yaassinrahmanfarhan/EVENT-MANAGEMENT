@@ -1,34 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Event Details</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="relative min-h-screen">
-
-    <!-- Background image -->
-    <div class="absolute inset-0 bg-[url('https://w0.peakpx.com/wallpaper/697/411/HD-wallpaper-blue-lake-mountains-dark-amoled-trees-sky-scene-sunset-park.jpg')] bg-cover bg-center z-0"></div>
-
-    <!-- Dark overlay -->
-    <div class="absolute inset-0 bg-black opacity-70 z-10"></div>
-
-    <!-- Foreground content -->
-    <div class="relative z-20">
-        <!-- Navbar -->
-        <nav class="bg-gray-800 p-4">
-            <div class="container mx-auto flex justify-between items-center">
-                <a href="#" class="text-white text-lg font-semibold">LOGO</a>
-                <div class="space-x-4">
-                    <a href="http://127.0.0.1:8000/tasks/Home/" class="text-gray-300 hover:text-white">Home</a>
-                    <a href="#" class="text-gray-300 hover:text-white">Dashboard</a>
-                    <a href="#" class="text-gray-300 hover:text-white">About</a>
-                    <a href="#" class="text-gray-300 hover:text-white">Services</a>
-                    <a href="#" class="text-gray-300 hover:text-white">Contact</a>
-                </div>
-            </div>
-        </nav>
+{% extends "Navbar&footer.html" %}
+{% block title %}Event Details{% endblock title %}
+{% block tasks %}
 
         <!-- Filters -->
         <section class="py-8 px-4 max-w-6xl mx-auto">
@@ -82,28 +54,4 @@
             </div>
         </section>
 
-        <!-- Footer -->
-        <footer class="bg-gray-900 text-white py-8 mt-12">
-            <div class="container mx-auto px-4">
-                <div class="flex flex-col md:flex-row justify-between items-center">
-                    <div class="mb-4 md:mb-0 text-center md:text-left">
-                        <h2 class="text-lg font-bold">EVENT Management</h2>
-                        <p class="text-sm text-gray-400">Organizing your dreams, one event at a time.</p>
-                    </div>
-
-                    <div class="flex space-x-6 mb-4 md:mb-0">
-                        <a href="#" class="hover:text-gray-300 text-sm">Home</a>
-                        <a href="#" class="hover:text-gray-300 text-sm">About</a>
-                        <a href="#" class="hover:text-gray-300 text-sm">Services</a>
-                        <a href="#" class="hover:text-gray-300 text-sm">Contact</a>
-                    </div>
-
-                    <div class="text-sm text-gray-400 text-center md:text-right">
-                        <p>Created by Farhan &copy; 2025</p>
-                    </div>
-                </div>
-            </div>
-        </footer>
-    </div>
-</body>
-</html>
+{% endblock tasks %}

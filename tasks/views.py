@@ -8,3 +8,6 @@ def Home_page(request):
 
 def Event_details_view(request):
     return render(request, 'Event_details.html')
+
+def Contact_us_view(request):
+    return render(request, 'Contact_us.html')
