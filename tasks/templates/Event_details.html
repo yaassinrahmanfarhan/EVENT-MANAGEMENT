@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Event Details</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="relative min-h-screen">
+
+    <!-- Background image -->
+    <div class="absolute inset-0 bg-[url('https://w0.peakpx.com/wallpaper/697/411/HD-wallpaper-blue-lake-mountains-dark-amoled-trees-sky-scene-sunset-park.jpg')] bg-cover bg-center z-0"></div>
+
+    <!-- Dark overlay -->
+    <div class="absolute inset-0 bg-black opacity-70 z-10"></div>
+
+    <!-- Foreground content -->
+    <div class="relative z-20">
+        <!-- Navbar -->
+        <nav class="bg-gray-800 p-4">
+            <div class="container mx-auto flex justify-between items-center">
+                <a href="#" class="text-white text-lg font-semibold">LOGO</a>
+                <div class="space-x-4">
+                    <a href="#" class="text-gray-300 hover:text-white">Home</a>
+                    <a href="#" class="text-gray-300 hover:text-white">Dashboard</a>
+                    <a href="#" class="text-gray-300 hover:text-white">About</a>
+                    <a href="#" class="text-gray-300 hover:text-white">Services</a>
+                    <a href="#" class="text-gray-300 hover:text-white">Contact</a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Filters -->
+        <section class="py-8 px-4 max-w-6xl mx-auto">
+            <h1 class="text-3xl font-bold text-white mb-6 text-center">Event Details</h1>
+
+            <div class="flex flex-wrap gap-4 justify-center mb-10">
+                <!-- Category -->
+                <select class="bg-gray-800 text-white p-2 rounded">
+                    <option>All Categories</option>
+                    <option>Technology</option>
+                    <option>Music</option>
+                    <option>Business</option>
+                    <option>Art</option>
+                </select>
+
+                <!-- Date Range -->
+                <div class="flex items-center gap-2 text-white">
+                    <label>Start Date:</label>
+                    <input type="date" class="p-2 rounded bg-gray-800 text-white focus:outline-none" />
+                </div>
+                <div class="flex items-center gap-2 text-white">
+                    <label>End Date:</label>
+                    <input type="date" class="p-2 rounded bg-gray-800 text-white focus:outline-none" />
+                </div>
+
+                <button class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Filter</button>
+            </div>
+
+            <!-- Event Card -->
+            <div class="bg-white rounded-lg shadow-lg overflow-hidden mb-12">
+                <img src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=800&q=80" class="w-full h-64 object-cover" alt="Event Image" />
+
+                <div class="p-6">
+                    <h2 class="text-2xl font-bold mb-2">Tech Future Conference 2025</h2>
+                    <p class="text-gray-600 mb-4">Location: San Francisco, CA</p>
+                    <p class="text-gray-600 mb-4">Date & Time: 2025-09-15 at 10:00 AM</p>
+                    <p class="text-gray-600 mb-4">Ticket Price: $150</p>
+                    <p class="text-gray-700">Explore the future of technology with global leaders and innovators. Panels, workshops, and networking all in one place.</p>
+                </div>
+
+                <!-- Participants -->
+                <div class="bg-gray-100 p-6">
+                    <h3 class="text-xl font-semibold mb-2">Participants</h3>
+                    <ul class="list-disc list-inside text-gray-700">
+                        <li>Farhan Rahman</li>
+                        <li>Jane Doe</li>
+                        <li>John Smith</li>
+                        <li>Lisa Ray</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="bg-gray-900 text-white py-8 mt-12">
+            <div class="container mx-auto px-4">
+                <div class="flex flex-col md:flex-row justify-between items-center">
+                    <div class="mb-4 md:mb-0 text-center md:text-left">
+                        <h2 class="text-lg font-bold">EVENT Management</h2>
+                        <p class="text-sm text-gray-400">Organizing your dreams, one event at a time.</p>
+                    </div>
+
+                    <div class="flex space-x-6 mb-4 md:mb-0">
+                        <a href="#" class="hover:text-gray-300 text-sm">Home</a>
+                        <a href="#" class="hover:text-gray-300 text-sm">About</a>
+                        <a href="#" class="hover:text-gray-300 text-sm">Services</a>
+                        <a href="#" class="hover:text-gray-300 text-sm">Contact</a>
+                    </div>
+
+                    <div class="text-sm text-gray-400 text-center md:text-right">
+                        <p>Created by Farhan &copy; 2025</p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>
