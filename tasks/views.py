@@ -11,3 +11,9 @@ def Event_details_view(request):
 
 def Contact_us_view(request):
     return render(request, 'Contact_us.html')
+
+def About_us_view(request):
+    return render(request, 'About_us.html')
+
+def Services_view(request):
+    return render(request, 'Services.html')
