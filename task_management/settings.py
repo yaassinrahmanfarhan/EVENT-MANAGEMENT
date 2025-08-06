@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-@_a2fw!d-!z*88w+pobgi_bo7=53d(8tdc@&xx$^p(xhtp$8^t
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
-CSRF_TRUSTED_ORIGINS = ['http://*.onrender.com', 'http://127.0.0.1:8000/tasks/Home']
+CSRF_TRUSTED_ORIGINS = ['http://*.onrender.com', 'http://127.0.0.1:8000']
 
 # Application definition
 
@@ -98,7 +98,7 @@ WSGI_APPLICATION = 'task_management.wsgi.application'
 DATABASES = {
     'default': dj_database_url.config(
         # Replace this value with your local database's connection string.
-        default='postgresql://event_management_db_lpsm_user:X2pMs2ZFx6TGaDEXnOzKPRd0V9uwme9Q@dpg-d29s3eidbo4c739nbcr0-a.oregon-postgres.render.com/event_management_db_lpsm',
+        default='postgresql://event_management_database_xa4p_user:NNsA4syDx6tJjLhhMAunhbMSClulgLmV@dpg-d29sk9fdiees738cvhlg-a.oregon-postgres.render.com/event_management_database_xa4p',
         conn_max_age=600
     )
 }
