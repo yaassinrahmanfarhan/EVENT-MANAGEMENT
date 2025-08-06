@@ -13,11 +13,12 @@
     <div class="container mx-auto flex justify-between items-center">
       <a href="#" class="text-lg font-bold">LOGO</a>
       <div class="space-x-4">
-        <a href="http://127.0.0.1:8000/tasks/Home/" class="hover:text-gray-300">Home</a>
-        <a href="#" class="hover:text-gray-300">Dashboard</a>
-        <a href="#" class="hover:text-gray-300">Events</a>
-        <a href="#" class="hover:text-gray-300">Participants</a>
-        <a href="#" class="hover:text-gray-300">Logout</a>
+        <a href="{% url 'Home' %}" class="hover:text-gray-300">Home</a>
+        <a href="{% url 'dashboard' %}" class="hover:text-gray-300">Dashboard</a>
+        <a href="{% url 'category_list' %}" class="hover:text-gray-300">Categories</a>
+        <a href="{% url 'event_list' %}" class="hover:text-gray-300"> All Events</a>
+        <a href="{% url 'participant_list' %}" class="hover:text-gray-300">Participants</a>
+        <a href="{% url 'Home' %}" class="hover:text-gray-300">Logout</a>
       </div>
     </div>
   </nav>
@@ -28,40 +29,57 @@
 
     <!-- Stats Grid -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-      <div class="bg-white p-6 rounded shadow text-center cursor-pointer hover:bg-blue-100">
+      <a href="{% url 'dashboard' %}?filter=participants" class="bg-white p-6 rounded shadow text-center cursor-pointer hover:bg-blue-100 block">
         <h2 class="text-2xl font-bold">{{ total_participants }}</h2>
         <p class="text-gray-600">Total Participants</p>
-      </div>
-      <div class="bg-white p-6 rounded shadow text-center cursor-pointer hover:bg-blue-100">
+      </a>
+      <a href="{% url 'dashboard' %}?filter=all" class="bg-white p-6 rounded shadow text-center cursor-pointer hover:bg-blue-100 block">
         <h2 class="text-2xl font-bold">{{ total_events }}</h2>
         <p class="text-gray-600">Total Events</p>
-      </div>
-      <div class="bg-white p-6 rounded shadow text-center cursor-pointer hover:bg-blue-100">
+      </a>
+      <a href="{% url 'dashboard' %}?filter=upcoming" class="bg-white p-6 rounded shadow text-center cursor-pointer hover:bg-blue-100 block">
         <h2 class="text-2xl font-bold">{{ upcoming_events }}</h2>
         <p class="text-gray-600">Upcoming Events</p>
-      </div>
-      <div class="bg-white p-6 rounded shadow text-center cursor-pointer hover:bg-blue-100">
+      </a>
+      <a href="{% url 'dashboard' %}?filter=past" class="bg-white p-6 rounded shadow text-center cursor-pointer hover:bg-blue-100 block">
         <h2 class="text-2xl font-bold">{{ past_events }}</h2>
         <p class="text-gray-600">Past Events</p>
-      </div>
+      </a>
     </div>
 
-    <!-- Today's Events -->
-    <section>
-      <h2 class="text-2xl font-semibold mb-4">Today's Events</h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {% for event in todays_events %}
-          <div class="bg-white p-4 rounded shadow">
-            <h3 class="text-xl font-semibold">{{ event.name }}</h3>
-            <p class="text-gray-600">📍 {{ event.location }}</p>
-            <p class="text-gray-600">📅 {{ event.date }}</p>
-            <p class="text-gray-600">⏰ {{ event.time }}</p>
-          </div>
-        {% empty %}
-          <p class="text-gray-500">No events found for today.</p>
-        {% endfor %}
-      </div>
-    </section>
+    <!-- Filtered Events Display -->
+    <div class="bg-white p-6 rounded shadow">
+      <h2 class="text-xl font-semibold mb-4">
+        {% if filter == 'upcoming' %}
+          Upcoming Events
+        {% elif filter == 'past' %}
+          Past Events
+        {% elif filter == 'all' %}
+          All Events
+        {% elif filter == 'participants' %}
+          Participants List
+        {% else %}
+          Today's Events
+        {% endif %}
+      </h2>
+
+      {% if filter == 'participants' %}
+        <p class="text-gray-600">You can view all participants <a href="{% url 'participant_list' %}" class="text-blue-600 underline">here</a>.</p>
+      {% else %}
+        {% if filtered_events %}
+          <ul class="space-y-4">
+            {% for event in filtered_events %}
+              <li class="border-b pb-2">
+                <h3 class="text-lg font-bold">{{ event.name }}</h3>
+                <p class="text-gray-600">{{ event.date }} at {{ event.time }} — {{ event.location }}</p>
+              </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p class="text-gray-500">No events found.</p>
+        {% endif %}
+      {% endif %}
+    </div>
   </main>
 
 </body>

@@ -1,0 +1,17 @@
+{% extends "Navbar&footer.html" %}
+
+{% block tasks %}
+<div class="max-w-xl mx-auto mt-10 p-6 bg-gray-100 shadow-md rounded-lg">
+    <h2 class="text-xl font-bold mb-4">{{ form.instance.pk|yesno:"Update Participant,Add Participant" }}</h2>
+
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+            Save
+        </button>
+        <a href="{% url 'participant_list' %}" class="ml-2 text-gray-600 hover:underline">Cancel</a>
+    </form>
+</div>
+{% endblock %}

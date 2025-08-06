@@ -1,0 +1,18 @@
+{% extends "Navbar&footer.html" %}
+
+{% extends 'base.html' %}
+
+{% block tasks %}
+<div class="max-w-xl mx-auto mt-10 p-6 bg-white shadow-md rounded-lg">
+    <h2 class="text-xl font-bold mb-4 text-red-600">Delete Participant</h2>
+    <p class="mb-4">Are you sure you want to delete <strong>{{ participant.name }}</strong>?</p>
+
+    <form method="POST">
+        {% csrf_token %}
+        <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
+            Yes, Delete
+        </button>
+        <a href="{% url 'participant_list' %}" class="ml-2 text-gray-600 hover:underline">Cancel</a>
+    </form>
+</div>
+{% endblock %}
