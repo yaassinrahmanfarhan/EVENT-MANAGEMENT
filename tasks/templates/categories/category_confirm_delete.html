@@ -1,0 +1,22 @@
+{% extends "Navbar&footer.html" %}
+
+{% block tasks %}
+<div class="max-w-xl mx-auto py-16 text-center">
+    <h2 class="text-2xl font-bold mb-6">Delete Category</h2>
+
+    <p class="mb-8 text-lg text-gray-700">
+        Are you sure you want to delete the category:
+        <strong class="text-red-600">{{ category.name }}</strong>?
+    </p>
+
+    <form method="post" class="flex justify-center space-x-4">
+        {% csrf_token %}
+        <a href="{% url 'category_list' %}" class="bg-gray-300 hover:bg-gray-400 text-black px-4 py-2 rounded">
+            Cancel
+        </a>
+        <button type="submit" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded">
+            Confirm Delete
+        </button>
+    </form>
+</div>
+{% endblock %}

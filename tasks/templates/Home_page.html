@@ -1,84 +1,70 @@
 {% extends "Navbar&footer.html" %}
 {% block title %}Home Page{% endblock title %}
 {% block tasks %}
+<!-- Banner with Background Image -->
+<div class="relative bg-transparent h-screen w-full"> 
+    <div class="absolute inset-0 flex flex-col justify-center items-center text-center px-6">
+        <!-- Welcome Text -->
+        <h1 class="text-white text-5xl font-extrabold mb-4 drop-shadow-lg">
+            Welcome to <span class="text-blue-300">Event Management</span>
+        </h1>
+         <p class="text-white mb-6 text-lg">Organize, Discover, and Participate in Events with Ease</p>
 
-                <!-- Banner with Background Image -->
-                <div class="relative bg-transparent h-screen w-full">
-                    <div class="absolute inset-0 flex flex-col justify-center items-center">
-                        <!-- Welcome Text -->
-                        <h1 class="text-white text-4xl font-bold mb-2">
-                            Welcome to EVENT Management
-                        </h1>
-                        
-                        <!-- Created by -->
-                        <div class="flex justify-center w-full mb-6">
-                            <p class="text-white text-sm">
-                                Created By Farhan
-                            </p>
-                        </div>
-                        
-                        <!-- Search Bar -->
-                        <div class="bg-gray-800 p-4 w-1/2 mx-auto rounded-lg shadow-lg opacity-75 mt-6">
-                            <div class="flex justify-center">
-                                <input type="text" placeholder="Search..." class="px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
-                                <button class="ml-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">Search</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </headermain>
-        </header>
+        <!-- Created by -->
+        <div class="flex justify-center w-full mb-6">
+            <p class="text-white text-sm">
+                Created By Farhan
+            </p>
+        </div>
 
-        <!-- Event Section -->
-        <section class="my-12 px-6">
-            <h2 class="text-3xl font-semibold text-center mb-8 text-white">Upcoming Events</h2>
-            
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                <!-- Event Box 1 -->
-                <div class="bg-white rounded-lg shadow-lg overflow-hidden">
-                    <img src="https://images.unsplash.com/photo-1521747116042-5a810fda9664?crop=entropy&cs=tinysrgb&fit=max&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&ixlib=rb-4.0.3&q=80&w=400" alt="Event 1" class="w-full h-48 object-cover" />
-                    <div class="p-4">
-                        <h3 class="text-xl font-semibold">Event Name 1</h3>
-                        <p class="text-gray-700 mt-2">This is a short description of Event 1. It will give participants an overview of what the event is about.</p>
-                        <div class="flex justify-between items-center mt-4">
-                            <span class="text-gray-500">Participants: 150</span>
-                            <span class="text-gray-500">Location: New York</span>
-                        </div>
-                        <a href="http://127.0.0.1:8000/tasks/Event-details-view/">
-                        <button class="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">View Details</button>
-                        </a>
-                    </div>
-                </div>
-                
-                <!-- Event Box 2 -->
-                <div class="bg-white rounded-lg shadow-lg overflow-hidden">
-                    <img src="https://images.unsplash.com/photo-1533083253323-28f92b2fe989?crop=entropy&cs=tinysrgb&fit=max&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&ixlib=rb-4.0.3&q=80&w=400" alt="Event 2" class="w-full h-48 object-cover" />
-                    <div class="p-4">
-                        <h3 class="text-xl font-semibold">Event Name 2</h3>
-                        <p class="text-gray-700 mt-2">This is a short description of Event 2. Join us for a day of networking and growth.</p>
-                        <div class="flex justify-between items-center mt-4">
-                            <span class="text-gray-500">Participants: 200</span>
-                            <span class="text-gray-500">Location: London</span>
-                        </div>
-                        <button class="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">View Details</button>
-                    </div>
-                </div>
-
-                <!-- Event Box 3 -->
-                <div class="bg-white rounded-lg shadow-lg overflow-hidden">
-                    <img src="https://images.unsplash.com/photo-1532398011470-098b798b4471?crop=entropy&cs=tinysrgb&fit=max&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&ixlib=rb-4.0.3&q=80&w=400" alt="Event 3" class="w-full h-48 object-cover" />
-                    <div class="p-4">
-                        <h3 class="text-xl font-semibold">Event Name 3</h3>
-                        <p class="text-gray-700 mt-2">Join us for Event 3 to explore new opportunities in the tech world.</p>
-                        <div class="flex justify-between items-center mt-4">
-                            <span class="text-gray-500">Participants: 120</span>
-                            <span class="text-gray-500">Location: San Francisco</span>
-                        </div>
-                        <button class="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">View Details</button>
-                    </div>
-                </div>
+        <!-- Search Bar Form -->
+        <form method="get" action="{% url 'Home' %}" class="bg-gray-800 p-4 w-1/2 mx-auto rounded-lg shadow-lg opacity-75 mt-6">
+            <div class="flex justify-center">
+                <input 
+                    type="text" 
+                    name="q" 
+                    placeholder="Search events..." 
+                    value="{{ request.GET.q }}" 
+                    class="px-4 py-2 rounded bg-gray-700 text-white w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <button 
+                    type="submit" 
+                    class="ml-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                    Search
+                </button>
             </div>
-        </section>
+        </form>
+    </div>
+</div>
 
-        
+<!-- Event Section -->
+<section class="my-12 px-6">
+    <h2 class="text-3xl font-semibold text-center mb-8 text-white">Upcoming Events</h2>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        {% for event in events %}
+        <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+            <img src="{{ event.image_url }}" alt="{{ event.name }}" class="w-full h-48 object-cover" />
+            <div class="p-4">
+                <h3 class="text-xl font-semibold">{{ event.name }}</h3>
+                <p class="text-gray-700 mt-2">{{ event.description|truncatewords:20 }}</p>
+                <div class="flex justify-between items-center mt-4">
+                    <span class="text-gray-500">Participants: {{ event.participants.count }}</span>
+                    <span class="text-gray-500">Location: {{ event.location }}</span>
+                </div>
+                <a href="{% url 'Event-details' event.id %}">
+                    <button class="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
+                        View Details
+                    </button>
+                </a>
+                
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-white text-center col-span-full">No events found.</p>
+        {% endfor %}
+    </div>
+</section>
+
 {% endblock tasks %}
