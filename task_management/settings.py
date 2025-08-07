@@ -98,7 +98,7 @@ WSGI_APPLICATION = 'task_management.wsgi.application'
 DATABASES = {
     'default': dj_database_url.config(
         # Replace this value with your local database's connection string.
-        default='postgresql://event_management_db_2e4t_user:hNHjKmzqTkHkSzQWlVpLC7yQHAPEB7Xl@dpg-d2a4bder433s73a2skhg-a.oregon-postgres.render.com/event_management_db_2e4t',
+        default='postgresql://event_management_db_8323_user:DibH3xT2wYGmtKOt355dcdZgQGy3T00U@dpg-d2a4lnadbo4c73av9tlg-a.oregon-postgres.render.com/event_management_db_8323',
         conn_max_age=600
     )
 }
