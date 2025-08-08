@@ -1,74 +1,46 @@
-{% extends "Navbar&footer.html" %}
-
+{% extends "base.html" %}
 {% block title %}Services{% endblock title %}
-
 {% block tasks %}
-
-<!-- Services Section -->
 <section class="py-16 px-4 max-w-6xl mx-auto text-white">
-  <h1 class="text-4xl font-bold text-center mb-12">Our Services</h1>
+    <h1 class="text-4xl font-bold text-center mb-12">Our Services</h1>
 
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-    <!-- Service 1 -->
-    <div class="bg-white bg-opacity-90 p-6 rounded-lg shadow-lg">
-      <h2 class="text-2xl font-semibold text-gray-800 mb-2">Event Planning</h2>
-      <p class="text-gray-700">
-        From corporate meetings to grand openings, we handle logistics,
-        scheduling, and coordination to deliver a flawless experience.
-      </p>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="bg-gray-800 p-6 rounded-lg shadow-lg hover:shadow-xl transition">
+            <h3 class="text-2xl font-semibold text-blue-300 mb-4">Event Planning</h3>
+            <p class="text-gray-300">
+                Comprehensive event planning from concept to execution, tailored to your needs and budget.
+            </p>
+        </div>
+        <div class="bg-gray-800 p-6 rounded-lg shadow-lg hover:shadow-xl transition">
+            <h3 class="text-2xl font-semibold text-blue-300 mb-4">Venue Management</h3>
+            <p class="text-gray-300">
+                Finding the perfect venue and managing logistics so your event runs smoothly.
+            </p>
+        </div>
+        <div class="bg-gray-800 p-6 rounded-lg shadow-lg hover:shadow-xl transition">
+            <h3 class="text-2xl font-semibold text-blue-300 mb-4">Catering Services</h3>
+            <p class="text-gray-300">
+                Delicious catering options to suit any event style, theme, and dietary requirement.
+            </p>
+        </div>
+        <div class="bg-gray-800 p-6 rounded-lg shadow-lg hover:shadow-xl transition">
+            <h3 class="text-2xl font-semibold text-blue-300 mb-4">Technical Support</h3>
+            <p class="text-gray-300">
+                Audio-visual, lighting, and live-streaming solutions to make your event unforgettable.
+            </p>
+        </div>
+        <div class="bg-gray-800 p-6 rounded-lg shadow-lg hover:shadow-xl transition">
+            <h3 class="text-2xl font-semibold text-blue-300 mb-4">Event Marketing</h3>
+            <p class="text-gray-300">
+                Social media campaigns, posters, and branding to ensure maximum audience reach.
+            </p>
+        </div>
+        <div class="bg-gray-800 p-6 rounded-lg shadow-lg hover:shadow-xl transition">
+            <h3 class="text-2xl font-semibold text-blue-300 mb-4">Guest Management</h3>
+            <p class="text-gray-300">
+                Invitations, ticketing, and on-site registration for a smooth guest experience.
+            </p>
+        </div>
     </div>
-
-    <!-- Service 2 -->
-    <div class="bg-white bg-opacity-90 p-6 rounded-lg shadow-lg">
-      <h2 class="text-2xl font-semibold text-gray-800 mb-2">
-        Venue Management
-      </h2>
-      <p class="text-gray-700">
-        We manage venue selection, decoration, sound, lighting, and seating so
-        everything feels exactly right.
-      </p>
-    </div>
-
-    <!-- Service 3 -->
-    <div class="bg-white bg-opacity-90 p-6 rounded-lg shadow-lg">
-      <h2 class="text-2xl font-semibold text-gray-800 mb-2">Guest Services</h2>
-      <p class="text-gray-700">
-        We ensure every guest is welcomed, guided, and taken care of — from
-        invitation to after-party.
-      </p>
-    </div>
-
-    <!-- Service 4 -->
-    <div class="bg-white bg-opacity-90 p-6 rounded-lg shadow-lg">
-      <h2 class="text-2xl font-semibold text-gray-800 mb-2">Tech Support</h2>
-      <p class="text-gray-700">
-        We offer AV systems, live streaming, registration systems, and digital
-        tools for smooth, modern events.
-      </p>
-    </div>
-
-    <!-- Service 5 -->
-    <div class="bg-white bg-opacity-90 p-6 rounded-lg shadow-lg">
-      <h2 class="text-2xl font-semibold text-gray-800 mb-2">
-        Catering & Hospitality
-      </h2>
-      <p class="text-gray-700">
-        Delicious food and drinks, served with care. We work with top vendors
-        for a wide range of catering needs.
-      </p>
-    </div>
-
-    <!-- Service 6 -->
-    <div class="bg-white bg-opacity-90 p-6 rounded-lg shadow-lg">
-      <h2 class="text-2xl font-semibold text-gray-800 mb-2">
-        Marketing & Promotion
-      </h2>
-      <p class="text-gray-700">
-        Our team helps you build buzz with social media, email campaigns,
-        posters, and influencer outreach.
-      </p>
-    </div>
-  </div>
 </section>
-
 {% endblock tasks %}

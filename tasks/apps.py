@@ -9,3 +9,4 @@ class TasksConfig(AppConfig):
         for g in groups:
             Group.objects.get_or_create(name=g)
         import tasks.signals
+

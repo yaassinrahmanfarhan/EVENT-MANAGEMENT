@@ -1,7 +1,6 @@
-# tasks/signals.py
 from django.db.models.signals import post_save, m2m_changed
 from django.dispatch import receiver
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import User
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from django.urls import reverse
@@ -9,25 +8,20 @@ from django.conf import settings
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 
-
 from .models import Event
 
-# Send activation email when user is created and inactive
+# Activation email when user created (inactive)
 @receiver(post_save, sender=User)
 def send_activation_email(sender, instance, created, **kwargs):
-    # Only send if created and not active (so we can create admin active users manually)
-    if created and not instance.is_active:
+    if created and not instance.is_active and instance.email:
         token = default_token_generator.make_token(instance)
         uid = urlsafe_base64_encode(force_bytes(instance.pk))
         activation_link = settings.SITE_URL + reverse('activate_account', kwargs={'uidb64': uid, 'token': token})
         subject = 'Activate Your Account'
-        message = f'Hi {instance.username},\n\nPlease activate your account by clicking the link below:\n{activation_link}\n\nIf you did not register, ignore this email.'
-        from_email = settings.DEFAULT_FROM_EMAIL
-        recipient_list = [instance.email] if instance.email else []
-        if recipient_list:
-            send_mail(subject, message, from_email, recipient_list)
+        message = f'Hi {instance.username},\n\nPlease activate your account by clicking the link below:\n{activation_link}\n\nIf you did not register, please ignore this email.'
+        send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [instance.email])
 
-# Send confirmation email when user RSVPs (m2m on Event.participant)
+# RSVP confirmation email when user added to event participants
 @receiver(m2m_changed, sender=Event.participant.through)
 def send_rsvp_confirmation_email(sender, instance, action, pk_set, **kwargs):
     if action == "post_add":
@@ -38,6 +32,6 @@ def send_rsvp_confirmation_email(sender, instance, action, pk_set, **kwargs):
                 message = (
                     f'Hi {user.get_full_name() or user.username},\n\n'
                     f'You have successfully RSVP’d to the event: {instance.name}.\n'
-                    f'Date: {instance.date}\nLocation: {instance.location}\n\nThanks!'
+                    f'Date: {instance.date}\nLocation: {instance.location}\n\nThank you!'
                 )
                 send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [user.email])

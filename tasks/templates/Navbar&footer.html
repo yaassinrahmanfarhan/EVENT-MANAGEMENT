@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{% block title %}Event Management{% endblock %}</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
@@ -21,9 +21,22 @@
         <nav class="bg-gray-800 p-4" role="navigation" aria-label="Main Navigation">
             <div class="container mx-auto flex justify-between items-center">
                 <a href="{% url 'home' %}" class="text-white text-lg font-semibold">LOGO</a>
+
                 <div class="space-x-4 flex items-center">
+
                     <a href="{% url 'home' %}" class="text-gray-300 hover:text-white">Home</a>
-                    <a href="{% url 'dashboard' %}" class="text-gray-300 hover:text-white">Dashboard</a>
+
+                    {% if user.is_authenticated %}
+                        {% if user.groups.filter(name='Admin').exists %}
+                            <a href="{% url 'admin_dashboard' %}" class="text-gray-300 hover:text-white">Admin Dashboard</a>
+                            <a href="{% url 'group_list' %}" class="text-gray-300 hover:text-white">Groups</a>
+                        {% elif user.groups.filter(name='Organizer').exists %}
+                            <a href="{% url 'organizer_dashboard' %}" class="text-gray-300 hover:text-white">Organizer Dashboard</a>
+                        {% else %}
+                            <a href="{% url 'participant_dashboard' %}" class="text-gray-300 hover:text-white">My Events</a>
+                        {% endif %}
+                    {% endif %}
+
                     <a href="{% url 'about_us' %}" class="text-gray-300 hover:text-white">About</a>
                     <a href="{% url 'services' %}" class="text-gray-300 hover:text-white">Services</a>
                     <a href="{% url 'contact_us' %}" class="text-gray-300 hover:text-white">Contact</a>
@@ -56,8 +69,8 @@
         {% endif %}
 
         <!-- Page content block -->
-        {% block tasks %}
-        {% endblock tasks %}
+        {% block content %}
+        {% endblock content %}
 
     </div>
 

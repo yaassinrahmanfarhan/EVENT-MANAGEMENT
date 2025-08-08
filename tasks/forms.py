@@ -3,7 +3,7 @@ from django.core.exceptions import ValidationError
 from django.utils import timezone
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-
+from django.contrib.auth.models import Group
 from .models import Event, Category
 
 
@@ -107,3 +107,8 @@ class CategoryForm(forms.ModelForm):
         if Category.objects.filter(name__iexact=name).exists():
             raise ValidationError("A category with this name already exists.")
         return name
+
+class GroupForm(forms.ModelForm):
+    class Meta:
+        model = Group
+        fields = ['name']

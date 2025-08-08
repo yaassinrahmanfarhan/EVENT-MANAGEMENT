@@ -1,74 +1,48 @@
-{% extends "Navbar&footer.html" %}
+{% extends "base.html" %}
 {% block title %}Event Details{% endblock title %}
-
 {% block tasks %}
-
-<section class="py-8 px-4 max-w-6xl mx-auto">
-    <h1 class="text-3xl font-bold text-white mb-6 text-center">Event Details</h1>
-
-    <!-- Event Card -->
-    <div class="bg-white rounded-lg shadow-lg overflow-hidden mb-12">
-        {% if event.image %}
-            <img src="{{ event.image.url }}" alt="{{ event.name }}" class="w-full h-64 object-cover" />
-        {% else %}
-            <img src="https://source.unsplash.com/random/800x400?event" alt="Event Image" class="w-full h-64 object-cover" />
-        {% endif %}
-
-        <div class="p-6">
-            <h2 class="text-2xl font-bold mb-2">{{ event.name }}</h2>
-            <p class="text-gray-600 mb-4"><strong>Location:</strong> {{ event.location }}</p>
-            <p class="text-gray-600 mb-4"><strong>Date & Time:</strong> {{ event.date }} at {{ event.time }}</p>
-            <p class="text-gray-700">{{ event.description }}</p>
-        </div>
-
-        <!-- RSVP Section -->
-        <div class="bg-gray-50 p-6 border-t">
-            <h3 class="text-xl font-semibold mb-4">RSVP</h3>
-
-            {% if user.is_authenticated %}
-                {% if event.participant.filter(pk=user.pk).exists %}
-                    <!-- Cancel RSVP -->
-                    <form method="post" action="{% url 'cancel_rsvp_event' event.id %}">
-                        {% csrf_token %}
-                        <button class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded">
-                            Cancel RSVP
-                        </button>
-                    </form>
-                {% else %}
-                    <!-- RSVP Button -->
-                    <form method="post" action="{% url 'rsvp_event' event.id %}">
-                        {% csrf_token %}
-                        <button class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">
-                            RSVP Now
-                        </button>
-                    </form>
-                {% endif %}
+<section class="py-16 px-4 max-w-5xl mx-auto text-white">
+    {% if event %}
+        <div class="bg-gray-800 rounded-lg shadow-lg overflow-hidden">
+            {% if event.image %}
+                <img src="{{ event.image.url }}" alt="{{ event.name }}" class="w-full h-64 object-cover">
             {% else %}
-                <p class="text-yellow-600">
-                    Please <a href="{% url 'login' %}" class="underline">login</a> to RSVP.
-                </p>
+                <img src="https://via.placeholder.com/800x400?text=No+Image" alt="No Image" class="w-full h-64 object-cover">
             {% endif %}
-        </div>
+            
+            <div class="p-6">
+                <h1 class="text-4xl font-bold text-blue-300 mb-4">{{ event.name }}</h1>
+                <p class="text-gray-300 mb-4">{{ event.description }}</p>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-6">
+                    <div>
+                        <p><span class="font-semibold">Location:</span> {{ event.location }}</p>
+                        <p><span class="font-semibold">Date:</span> {{ event.date }}</p>
+                        <p><span class="font-semibold">Time:</span> {{ event.time }}</p>
+                    </div>
+                    <div>
+                        <p><span class="font-semibold">Participants:</span> {{ event.participant.count }}</p>
+                        <p><span class="font-semibold">Max Capacity:</span> {{ event.max_capacity }}</p>
+                        <p><span class="font-semibold">Category:</span> {{ event.category }}</p>
+                    </div>
+                </div>
 
-        <!-- Participants List -->
-        <div class="bg-gray-100 p-6 border-t">
-            <h3 class="text-xl font-semibold mb-2">Participants</h3>
-            {% if event.participant.exists %}
-                <ul class="list-disc list-inside text-gray-700">
-                    {% for participant in event.participant.all %}
-                        <li>
-                            {{ participant.get_full_name|default:participant.username }}
-                            {% if participant.email %}
-                                <span class="text-gray-500">({{ participant.email }})</span>
-                            {% endif %}
-                        </li>
-                    {% endfor %}
-                </ul>
-            {% else %}
-                <p class="text-gray-600">No participants have joined this event yet.</p>
-            {% endif %}
+                <div class="mt-8">
+                    {% if user.is_authenticated %}
+                        <form method="post" action="{% url 'join_event' event.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="bg-blue-600 px-6 py-2 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                Join Event
+                            </button>
+                        </form>
+                    {% else %}
+                        <p class="text-gray-400">Please <a href="{% url 'login' %}" class="text-blue-300 underline">login</a> to join this event.</p>
+                    {% endif %}
+                </div>
+            </div>
         </div>
-    </div>
+    {% else %}
+        <p class="text-center text-gray-400">Event not found.</p>
+    {% endif %}
 </section>
-
 {% endblock tasks %}

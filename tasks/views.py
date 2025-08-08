@@ -6,7 +6,7 @@ from django.contrib.auth import authenticate,login
 from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView
 from django.contrib.auth.decorators import login_required
 from .models import Event, Category
-from .forms import EventForm, UserRegisterForm, CategoryForm
+from .forms import EventForm, UserRegisterForm, CategoryForm, GroupForm
 from django.contrib.auth.forms import AuthenticationForm
 from django.utils.http import urlsafe_base64_decode
 from django.contrib.auth.tokens import default_token_generator
@@ -96,7 +96,7 @@ def event_list(request):
         'categories': Category.objects.all()
     })
 
-
+@login_required
 @role_required('Admin', 'Organizer')
 def event_create(request):
     if request.method == 'POST':
@@ -111,7 +111,7 @@ def event_create(request):
         form = EventForm()
     return render(request, 'events/event_form.html', {'form': form})
 
-
+@login_required
 @role_required('Admin', 'Organizer')
 def event_update(request, pk):
     event = get_object_or_404(Event, pk=pk)
@@ -165,11 +165,13 @@ def cancel_rsvp_event(request, event_id):
         messages.warning(request, "You had not RSVP'd to this event.")
     return redirect('event_details', event_id=event.id)
 
+@login_required
 @role_required('Admin')
 def participant_list(request):
     participants = User.objects.prefetch_related('rsvp_events')
     return render(request, 'participants/participant_list.html', {'participants': participants})
 
+@login_required
 @role_required('Admin')
 def participant_create(request):
     if request.method == 'POST':
@@ -186,6 +188,7 @@ def participant_create(request):
         form = UserRegisterForm()
     return render(request, 'participants/participant_form.html', {'form': form})
 
+@login_required
 @role_required('Admin')
 def participant_update(request, pk):
     user = get_object_or_404(User, pk=pk)
@@ -198,6 +201,7 @@ def participant_update(request, pk):
         form = UserRegisterForm(instance=user)
     return render(request, 'participants/participant_form.html', {'form': form})
 
+@login_required
 @role_required('Admin')
 def participant_delete(request, pk):
     user = get_object_or_404(User, pk=pk)
@@ -211,6 +215,7 @@ def category_list(request):
     categories = Category.objects.all()
     return render(request, 'categories/category_list.html', {'categories': categories})
 
+@login_required
 @role_required('Admin', 'Organizer')
 def category_create(request):
     if request.method == 'POST':
@@ -222,6 +227,7 @@ def category_create(request):
         form = CategoryForm()
     return render(request, 'categories/category_form.html', {'form': form})
 
+@login_required
 @role_required('Admin', 'Organizer')
 def category_update(request, pk):
     category = get_object_or_404(Category, pk=pk)
@@ -234,6 +240,7 @@ def category_update(request, pk):
         form = CategoryForm(instance=category)
     return render(request, 'categories/category_form.html', {'form': form})
 
+@login_required
 @role_required('Admin', 'Organizer')
 def category_delete(request, pk):
     category = get_object_or_404(Category, pk=pk)
@@ -301,7 +308,7 @@ class CustomLoginView(LoginView):
             return reverse('organizer_dashboard')
         return reverse('participant_dashboard')
     
-
+@login_required
 @role_required('Admin')
 def admin_dashboard(request):
     # Only Admins
@@ -312,6 +319,7 @@ def admin_dashboard(request):
     categories = Category.objects.all()
     return render(request, 'dashboards/admin_dashboard.html', {'events': events, 'participants': participants, 'categories': categories})
 
+@login_required
 @role_required('Organizer')
 def organizer_dashboard(request):
     if not request.user.groups.filter(name='Organizer').exists():
@@ -320,10 +328,55 @@ def organizer_dashboard(request):
     categories = Category.objects.all()
     return render(request, 'dashboards/organizer_dashboard.html', {'events': events, 'categories': categories})
 
+@login_required
 @role_required('Participant')
 def participant_dashboard(request):
     # show events this user RSVP'd to
     events = request.user.rsvp_events.all()
     return render(request, 'dashboards/participant_dashboard.html', {'events': events})
+
+
+@login_required
+@role_required('Admin')
+def group_list(request):
+    groups = Group.objects.all()
+    return render(request, 'admin/group_list.html', {'groups': groups})
+
+@login_required
+@role_required('Admin')
+def group_create(request):
+    if request.method == 'POST':
+        form = GroupForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Group created successfully.")
+            return redirect('group_list')
+    else:
+        form = GroupForm()
+    return render(request, 'admin/group_form.html', {'form': form})
+
+@login_required
+@role_required('Admin')
+def group_update(request, pk):
+    group = get_object_or_404(Group, pk=pk)
+    if request.method == 'POST':
+        form = GroupForm(request.POST, instance=group)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Group updated successfully.")
+            return redirect('group_list')
+    else:
+        form = GroupForm(instance=group)
+    return render(request, 'admin/group_form.html', {'form': form})
+
+@login_required
+@role_required('Admin')
+def group_delete(request, pk):
+    group = get_object_or_404(Group, pk=pk)
+    if request.method == 'POST':
+        group.delete()
+        messages.success(request, "Group deleted successfully.")
+        return redirect('group_list')
+    return render(request, 'admin/group_confirm_delete.html', {'group': group})
 
 
