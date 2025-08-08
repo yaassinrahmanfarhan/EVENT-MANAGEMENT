@@ -2,13 +2,14 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Q,Count
 from django.utils import timezone
 from django.http import HttpResponse
-from .models import Event, Participant,Category
+from .models import Event, Category
 from datetime import date
 from .forms import EventForm, ParticipantForm, CategoryForm
+from django.contrib.auth.models import User
 
 def Home_page(request):
     query = request.GET.get('q')
-    events = Event.objects.prefetch_related('participants')
+    events = Event.objects.prefetch_related('User')
 
     if query:
         events = events.filter(name__icontains=query)
@@ -32,7 +33,7 @@ def Services_view(request):
     return render(request, 'Services.html')
 
 def event_list(request):
-    events = Event.objects.select_related('category').prefetch_related('participants')
+    events = Event.objects.select_related('category').prefetch_related('User')
 
     # Optional Filters
     category_id = request.GET.get('category')
@@ -88,7 +89,8 @@ def event_delete(request, pk):
 # # ---------------------------
 
 def participant_list(request):
-    participants = Participant.objects.prefetch_related('events')
+    #participants = Participant.objects.prefetch_related('events')
+    participants = User.objects.prefetch_related('rsvp_events')
     return render(request, 'participants/participant_list.html', {'participants': participants})
 
 
