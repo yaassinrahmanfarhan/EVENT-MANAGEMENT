@@ -11,7 +11,15 @@ from .models import Event, Category
 class EventForm(forms.ModelForm):
     class Meta:
         model = Event
-        fields = ['name', 'description', 'date', 'time', 'location', 'category']
+        fields = [
+            'name',
+            'description',
+            'date',
+            'time',
+            'location',
+            'category',
+            'image',  # Added image upload
+        ]
 
         widgets = {
             'name': forms.TextInput(attrs={
@@ -34,6 +42,9 @@ class EventForm(forms.ModelForm):
             'category': forms.Select(attrs={
                 'class': 'bg-gray-700 text-white p-2 rounded w-full'
             }),
+            'image': forms.ClearableFileInput(attrs={
+                'class': 'bg-gray-700 text-white p-2 rounded w-full'
+            }),
         }
 
     def clean_date(self):
@@ -43,7 +54,7 @@ class EventForm(forms.ModelForm):
         return date
 
 
-# User Registration Form (replaces old ParticipantForm)
+# User Registration Form (for signup with extra fields)
 class UserRegisterForm(UserCreationForm):
     email = forms.EmailField(
         required=True,
@@ -52,10 +63,24 @@ class UserRegisterForm(UserCreationForm):
             'placeholder': 'Enter your email'
         })
     )
+    first_name = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={
+            'class': 'w-full p-2 border border-gray-300 rounded',
+            'placeholder': 'First name'
+        })
+    )
+    last_name = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={
+            'class': 'w-full p-2 border border-gray-300 rounded',
+            'placeholder': 'Last name'
+        })
+    )
 
     class Meta:
         model = User
-        fields = ['username', 'email', 'password1', 'password2']
+        fields = ['username', 'email', 'first_name', 'last_name', 'password1', 'password2']
 
         widgets = {
             'username': forms.TextInput(attrs={
