@@ -1,0 +1,42 @@
+{% extends "nav&footer.html" %}
+
+{% block title %}Participant Dashboard{% endblock %}
+
+{% block tasks %}
+<div class="container mx-auto px-4 py-6">
+    <h1 class="text-3xl font-bold text-white mb-6">Participant Dashboard</h1>
+
+    <!-- RSVP Events -->
+    <section class="bg-white rounded-lg shadow p-4">
+        <h2 class="text-xl font-semibold mb-4">Events You've RSVP'd To</h2>
+        {% if events %}
+            <div class="overflow-x-auto">
+                <table class="min-w-full table-auto border border-gray-200">
+                    <thead class="bg-gray-100">
+                        <tr>
+                            <th class="px-4 py-2 border">Name</th>
+                            <th class="px-4 py-2 border">Category</th>
+                            <th class="px-4 py-2 border">Date</th>
+                            <th class="px-4 py-2 border">Details</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for event in events %}
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-4 py-2 border">{{ event.name }}</td>
+                            <td class="px-4 py-2 border">{{ event.category.name }}</td>
+                            <td class="px-4 py-2 border">{{ event.date|date:"M d, Y" }}</td>
+                            <td class="px-4 py-2 border">
+                                <a href="{% url 'event_detail' event.id %}" class="text-blue-500 hover:underline">View</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="text-gray-500">You haven't RSVP'd to any events yet.</p>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends "nav&footer.html" %}
+
+{% block title %}Organizer Dashboard{% endblock %}
+
+{% block tasks %}
+<div class="container mx-auto px-4 py-6">
+    <h1 class="text-3xl font-bold text-white mb-6">Organizer Dashboard</h1>
+
+    <!-- Events Created by Organizer -->
+    <section class="mb-8 bg-white rounded-lg shadow p-4">
+        <h2 class="text-xl font-semibold mb-4">Your Events</h2>
+        {% if events %}
+            <div class="overflow-x-auto">
+                <table class="min-w-full table-auto border border-gray-200">
+                    <thead class="bg-gray-100">
+                        <tr>
+                            <th class="px-4 py-2 border">Name</th>
+                            <th class="px-4 py-2 border">Category</th>
+                            <th class="px-4 py-2 border">Date</th>
+                            <th class="px-4 py-2 border">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for event in events %}
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-4 py-2 border">{{ event.name }}</td>
+                            <td class="px-4 py-2 border">{{ event.category.name }}</td>
+                            <td class="px-4 py-2 border">{{ event.date|date:"M d, Y" }}</td>
+                            <td class="px-4 py-2 border">
+                                <a href="{% url 'event_detail' event.id %}" class="text-blue-500 hover:underline">View</a>
+                                <a href="{% url 'edit_event' event.id %}" class="text-yellow-500 hover:underline ml-2">Edit</a>
+                                <a href="{% url 'delete_event' event.id %}" class="text-red-500 hover:underline ml-2">Delete</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="text-gray-500">You haven't created any events yet.</p>
+        {% endif %}
+    </section>
+
+    <!-- Categories -->
+    <section class="bg-white rounded-lg shadow p-4">
+        <h2 class="text-xl font-semibold mb-4">Categories</h2>
+        {% if categories %}
+            <ul class="flex flex-wrap gap-2">
+                {% for category in categories %}
+                    <li class="bg-green-100 text-green-700 px-3 py-1 rounded">{{ category.name }}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="text-gray-500">No categories found.</p>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}
