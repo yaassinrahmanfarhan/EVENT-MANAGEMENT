@@ -1,23 +1,40 @@
 from django import forms
-from .models import Event, Participant, Category
 from django.core.exceptions import ValidationError
 from django.utils import timezone
+from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm
+
+from .models import Event, Category
 
 
+# Event Form
 class EventForm(forms.ModelForm):
     class Meta:
         model = Event
         fields = ['name', 'description', 'date', 'time', 'location', 'category']
 
         widgets = {
-    'name': forms.TextInput(attrs={'class': 'bg-gray-700 text-white p-2 rounded w-full'}),
-    'description': forms.Textarea(attrs={'class': 'bg-gray-700 text-white p-2 rounded w-full'}),
-    'date': forms.DateInput(attrs={'type': 'date', 'class': 'bg-gray-700 text-white p-2 rounded w-full'}),
-    'time': forms.TimeInput(attrs={'type': 'time', 'class': 'bg-gray-700 text-white p-2 rounded w-full'}),
-    'location': forms.TextInput(attrs={'class': 'bg-gray-700 text-white p-2 rounded w-full'}),
-    'category': forms.Select(attrs={'class': 'bg-gray-700 text-white p-2 rounded w-full'}),
-}
-
+            'name': forms.TextInput(attrs={
+                'class': 'bg-gray-700 text-white p-2 rounded w-full'
+            }),
+            'description': forms.Textarea(attrs={
+                'class': 'bg-gray-700 text-white p-2 rounded w-full'
+            }),
+            'date': forms.DateInput(attrs={
+                'type': 'date',
+                'class': 'bg-gray-700 text-white p-2 rounded w-full'
+            }),
+            'time': forms.TimeInput(attrs={
+                'type': 'time',
+                'class': 'bg-gray-700 text-white p-2 rounded w-full'
+            }),
+            'location': forms.TextInput(attrs={
+                'class': 'bg-gray-700 text-white p-2 rounded w-full'
+            }),
+            'category': forms.Select(attrs={
+                'class': 'bg-gray-700 text-white p-2 rounded w-full'
+            }),
+        }
 
     def clean_date(self):
         date = self.cleaned_data['date']
@@ -26,34 +43,35 @@ class EventForm(forms.ModelForm):
         return date
 
 
+# User Registration Form (replaces old ParticipantForm)
+class UserRegisterForm(UserCreationForm):
+    email = forms.EmailField(
+        required=True,
+        widget=forms.EmailInput(attrs={
+            'class': 'w-full p-2 border border-gray-300 rounded',
+            'placeholder': 'Enter your email'
+        })
+    )
 
-
-class ParticipantForm(forms.ModelForm):
     class Meta:
-        model = Participant
-        fields = ['name', 'email', 'events']
+        model = User
+        fields = ['username', 'email', 'password1', 'password2']
 
         widgets = {
-            'name': forms.TextInput(attrs={
+            'username': forms.TextInput(attrs={
                 'class': 'w-full p-2 border border-gray-300 rounded',
-                'placeholder': 'Enter participant name'
-            }),
-            'email': forms.EmailInput(attrs={
-                'class': 'w-full p-2 border border-gray-300 rounded',
-                'placeholder': 'Enter participant email'
-            }),
-            'events': forms.CheckboxSelectMultiple(attrs={
-                'class': 'space-y-2'
+                'placeholder': 'Choose a username'
             }),
         }
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
-        if not email or "@" not in email:
-            raise ValidationError("Please enter a valid email address.")
+        if User.objects.filter(email__iexact=email).exists():
+            raise ValidationError("A user with this email already exists.")
         return email
 
 
+# Category Form
 class CategoryForm(forms.ModelForm):
     class Meta:
         model = Category
