@@ -17,7 +17,9 @@ urlpatterns = [
     path('events/update/<int:pk>/', views.event_update, name='event_update'),
     path('events/delete/<int:pk>/', views.event_delete, name='event_delete'),
 
-
+# #RSVP Actions
+#     path('events/<int:event_id>/rsvp/', views.rsvp_event, name='rsvp_event'),
+#     path('events/<int:event_id>/cancel-rsvp/', views.cancel_rsvp_event, name='cancel_rsvp_event'),
 
 #User/Participant Management
     path('participants/', views.participant_list, name='participant_list'),
