@@ -17,21 +17,21 @@ class Event(models.Model):
     location = models.CharField(max_length=255)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, null=True, blank=True)
 
-    # New: Organizer of the event
+    # Organizer of the event
     organizer = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name='organized_events'
     )
 
-    # New: Attendees (RSVP)
-    attendees = models.ManyToManyField(
+    # Participants (RSVP)
+    participant = models.ManyToManyField(
         User,
         related_name='rsvp_events',
         blank=True
     )
 
-    # New: Event image with default
+    # Event image with default
     image = models.ImageField(
         upload_to='event_images/',
         default='default_event.jpg'

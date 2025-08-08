@@ -64,14 +64,14 @@ class UserRegisterForm(UserCreationForm):
         })
     )
     first_name = forms.CharField(
-        required=False,
+        required=True, 
         widget=forms.TextInput(attrs={
             'class': 'w-full p-2 border border-gray-300 rounded',
             'placeholder': 'First name'
         })
     )
     last_name = forms.CharField(
-        required=False,
+        required=True, 
         widget=forms.TextInput(attrs={
             'class': 'w-full p-2 border border-gray-300 rounded',
             'placeholder': 'Last name'

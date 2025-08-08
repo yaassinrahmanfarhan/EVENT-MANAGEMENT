@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Event Details</title>
+    <title>{% block title %}Event Management{% endblock %}</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="min-h-screen flex flex-col relative">
@@ -14,30 +14,54 @@
     <!-- Dark overlay -->
     <div class="absolute inset-0 bg-black opacity-70 z-10"></div>
 
-    <!-- Main content (flex-1 ensures it grows to fill remaining space) -->
+    <!-- Main content -->
     <div class="relative z-20 flex-1 flex flex-col">
 
         <!-- Navbar -->
-        <nav class="bg-gray-800 p-4">
+        <nav class="bg-gray-800 p-4" role="navigation" aria-label="Main Navigation">
             <div class="container mx-auto flex justify-between items-center">
-                <a href="#" class="text-white text-lg font-semibold">LOGO</a>
-                <div class="space-x-4">
-                    <a href="{% url 'Home' %}" class="text-gray-300 hover:text-white">Home</a>
+                <a href="{% url 'home' %}" class="text-white text-lg font-semibold">LOGO</a>
+                <div class="space-x-4 flex items-center">
+                    <a href="{% url 'home' %}" class="text-gray-300 hover:text-white">Home</a>
                     <a href="{% url 'dashboard' %}" class="text-gray-300 hover:text-white">Dashboard</a>
-                    <a href="{% url 'About-us' %}" class="text-gray-300 hover:text-white">About</a>
-                    <a href="{% url 'Services' %}" class="text-gray-300 hover:text-white">Services</a>
-                    <a href="{% url 'Contact-us' %}" class="text-gray-300 hover:text-white">Contact</a>
+                    <a href="{% url 'about_us' %}" class="text-gray-300 hover:text-white">About</a>
+                    <a href="{% url 'services' %}" class="text-gray-300 hover:text-white">Services</a>
+                    <a href="{% url 'contact_us' %}" class="text-gray-300 hover:text-white">Contact</a>
+
+                    <!-- User Auth Links -->
+                    {% if user.is_authenticated %}
+                        <span class="text-gray-300 ml-4 mr-2">Hello, {{ user.first_name|default:user.username }}</span>
+                        <a href="{% url 'logout' %}" class="text-gray-300 hover:text-white">Logout</a>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="text-gray-300 hover:text-white ml-4">Login</a>
+                        <a href="{% url 'signup' %}" class="text-gray-300 hover:text-white ml-2">Sign Up</a>
+                    {% endif %}
                 </div>
             </div>
         </nav>
 
-        <!-- Django Template Content Block -->
+        <!-- Messages -->
+        {% if messages %}
+            <div class="container mx-auto px-4 mt-4">
+                {% for message in messages %}
+                    <div class="p-3 rounded mb-2
+                        {% if message.tags == 'error' %}bg-red-600 text-white
+                        {% elif message.tags == 'success' %}bg-green-600 text-white
+                        {% elif message.tags == 'warning' %}bg-yellow-500 text-black
+                        {% else %}bg-blue-600 text-white{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <!-- Page content block -->
         {% block tasks %}
         {% endblock tasks %}
 
     </div>
 
-    <!-- Footer (sticks to bottom of screen if content is short) -->
+    <!-- Footer -->
     <footer class="bg-gray-900 text-white py-8 relative z-20">
         <div class="container mx-auto px-4">
             <div class="flex flex-col md:flex-row justify-between items-center">
@@ -49,10 +73,10 @@
 
                 <!-- Right -->
                 <div class="flex flex-wrap justify-center md:justify-end space-x-6 items-center">
-                    <a href="{% url 'Home' %}" class="text-gray-300 hover:text-white">Home</a>
-                    <a href="{% url 'About-us' %}" class="text-gray-300 hover:text-white">About</a>
-                    <a href="{% url 'Services' %}" class="text-gray-300 hover:text-white">Services</a>
-                    <a href="{% url 'Contact-us' %}" class="text-gray-300 hover:text-white">Contact</a>
+                    <a href="{% url 'home' %}" class="text-gray-300 hover:text-white">Home</a>
+                    <a href="{% url 'about_us' %}" class="text-gray-300 hover:text-white">About</a>
+                    <a href="{% url 'services' %}" class="text-gray-300 hover:text-white">Services</a>
+                    <a href="{% url 'contact_us' %}" class="text-gray-300 hover:text-white">Contact</a>
                     <span class="text-sm text-gray-400">Created by Farhan &copy; 2025</span>
                 </div>
             </div>

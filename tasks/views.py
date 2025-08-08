@@ -2,37 +2,46 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Q
 from django.utils import timezone
 from django.contrib.auth.models import User
-from django.contrib.auth import login
+from django.contrib.auth import authenticate,login
+from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView
 from django.contrib.auth.decorators import login_required
 from .models import Event, Category
 from .forms import EventForm, UserRegisterForm, CategoryForm
+from django.contrib.auth.forms import AuthenticationForm
+from django.utils.http import urlsafe_base64_decode
+from django.contrib.auth.tokens import default_token_generator
+from django.contrib import messages
+from django.http import HttpResponse
+from django.contrib.auth.models import Group
+from django.http import HttpResponseForbidden
+from django.urls import reverse
+from .decorators import role_required
 
-
-def home_page(request):
+def Home_page(request):
     query = request.GET.get('q')
     events = Event.objects.prefetch_related('participant')
 
     if query:
         events = events.filter(name__icontains=query)
 
-    return render(request, 'home_page.html', {'events': events, 'query': query})
+    return render(request, 'Home_page.html', {'events': events, 'query': query})
 
 
-def event_details(request, event_id):
+def Event_details_view(request, event_id):
     event = get_object_or_404(Event, id=event_id)
-    return render(request, 'event_details.html', {'event': event})
+    return render(request, 'Event_details.html', {'event': event})
 
 
-def contact_us(request):
-    return render(request, 'contact_us.html')
+def Contact_us_view(request):
+    return render(request, 'Contact_us.html')
 
 
-def about_us(request):
-    return render(request, 'about_us.html')
+def About_us_view(request):
+    return render(request, 'About_us.html')
 
 
-def services(request):
-    return render(request, 'services.html')
+def Services_view(request):
+    return render(request, 'Services.html')
 
 
 def dashboard(request):
@@ -88,7 +97,7 @@ def event_list(request):
     })
 
 
-@login_required
+@role_required('Admin', 'Organizer')
 def event_create(request):
     if request.method == 'POST':
         form = EventForm(request.POST, request.FILES)
@@ -103,7 +112,7 @@ def event_create(request):
     return render(request, 'events/event_form.html', {'form': form})
 
 
-@login_required
+@role_required('Admin', 'Organizer')
 def event_update(request, pk):
     event = get_object_or_404(Event, pk=pk)
     if event.organizer != request.user:
@@ -119,7 +128,7 @@ def event_update(request, pk):
     return render(request, 'events/event_form.html', {'form': form})
 
 
-@login_required
+@role_required('Admin', 'Organizer')
 def event_delete(request, pk):
     event = get_object_or_404(Event, pk=pk)
     if event.organizer != request.user:
@@ -134,34 +143,50 @@ def event_delete(request, pk):
 @login_required
 def rsvp_event(request, event_id):
     event = get_object_or_404(Event, id=event_id)
-    event.participant.add(request.user)
-    return redirect('event_list')
 
+    # Only people in Participant group can RSVP
+    if not request.user.groups.filter(name='Participant').exists():
+        return HttpResponseForbidden("Only participants can RSVP to events.")
+
+    if event.participant.filter(pk=request.user.pk).exists():
+        messages.warning(request, "You have already RSVP'd to this event.")
+    else:
+        event.participant.add(request.user)  # triggers m2m_changed signal to send email
+        messages.success(request, "RSVP successful. Confirmation email sent.")
+    return redirect('event_details', event_id=event.id)
 
 @login_required
 def cancel_rsvp_event(request, event_id):
     event = get_object_or_404(Event, id=event_id)
-    event.participant.remove(request.user)
-    return redirect('event_list')
+    if event.participant.filter(pk=request.user.pk).exists():
+        event.participant.remove(request.user)
+        messages.success(request, "Your RSVP has been canceled.")
+    else:
+        messages.warning(request, "You had not RSVP'd to this event.")
+    return redirect('event_details', event_id=event.id)
 
-
+@role_required('Admin')
 def participant_list(request):
     participants = User.objects.prefetch_related('rsvp_events')
     return render(request, 'participants/participant_list.html', {'participants': participants})
 
-
+@role_required('Admin')
 def participant_create(request):
     if request.method == 'POST':
         form = UserRegisterForm(request.POST)
         if form.is_valid():
-            user = form.save()
-            login(request, user)
+            user = form.save(commit=False)
+            user.is_active = False  # require email activation
+            user.save()
+            participant_group, _ = Group.objects.get_or_create(name='Participant')
+            user.groups.add(participant_group)
+            messages.info(request, 'Participant created. An activation email has been sent.')
             return redirect('participant_list')
     else:
         form = UserRegisterForm()
     return render(request, 'participants/participant_form.html', {'form': form})
 
-
+@role_required('Admin')
 def participant_update(request, pk):
     user = get_object_or_404(User, pk=pk)
     if request.method == 'POST':
@@ -173,7 +198,7 @@ def participant_update(request, pk):
         form = UserRegisterForm(instance=user)
     return render(request, 'participants/participant_form.html', {'form': form})
 
-
+@role_required('Admin')
 def participant_delete(request, pk):
     user = get_object_or_404(User, pk=pk)
     if request.method == 'POST':
@@ -186,7 +211,7 @@ def category_list(request):
     categories = Category.objects.all()
     return render(request, 'categories/category_list.html', {'categories': categories})
 
-
+@role_required('Admin', 'Organizer')
 def category_create(request):
     if request.method == 'POST':
         form = CategoryForm(request.POST)
@@ -197,7 +222,7 @@ def category_create(request):
         form = CategoryForm()
     return render(request, 'categories/category_form.html', {'form': form})
 
-
+@role_required('Admin', 'Organizer')
 def category_update(request, pk):
     category = get_object_or_404(Category, pk=pk)
     if request.method == 'POST':
@@ -209,10 +234,96 @@ def category_update(request, pk):
         form = CategoryForm(instance=category)
     return render(request, 'categories/category_form.html', {'form': form})
 
-
+@role_required('Admin', 'Organizer')
 def category_delete(request, pk):
     category = get_object_or_404(Category, pk=pk)
     if request.method == 'POST':
         category.delete()
         return redirect('category_list')
     return render(request, 'categories/category_confirm_delete.html', {'category': category})
+
+
+#update
+
+# Activation view
+def activate_account(request, uidb64, token):
+    try:
+        uid = urlsafe_base64_decode(uidb64).decode()
+        user = User.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+
+    if user and default_token_generator.check_token(user, token):
+        user.is_active = True
+        user.save()
+        messages.success(request, 'Your account has been activated. You can now log in.')
+        return redirect('login')
+    else:
+        return HttpResponse('Activation link is invalid or expired.', status=400)
+    
+
+def signup_view(request):
+    if request.method == 'POST':
+        form = UserRegisterForm(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            # mark inactive until activation
+            user.is_active = False
+            user.save()
+            # assign Participant group (default)
+            participant_group, _ = Group.objects.get_or_create(name='Participant')
+            user.groups.add(participant_group)
+            # signals will send activation email (post_save)
+            messages.info(request, 'Registration successful. Please check your email to activate your account.')
+            return redirect('home')
+    else:
+        form = UserRegisterForm()
+    return render(request, 'participants/participant_form.html', {'form': form})
+
+
+class CustomLoginView(LoginView):
+    template_name = 'accounts/login.html'
+    authentication_form = AuthenticationForm
+
+    def form_valid(self, form):
+        user = form.get_user()
+        if not user.is_active:
+            messages.error(self.request, "Your account is not active. Please check your email for the activation link.")
+            return redirect('login')
+        login(self.request, user)
+        return redirect(self.get_success_url())
+
+    def get_success_url(self):
+        user = self.request.user
+        if user.groups.filter(name='Admin').exists():
+            return reverse('admin_dashboard')
+        if user.groups.filter(name='Organizer').exists():
+            return reverse('organizer_dashboard')
+        return reverse('participant_dashboard')
+    
+
+@role_required('Admin')
+def admin_dashboard(request):
+    # Only Admins
+    if not request.user.groups.filter(name='Admin').exists():
+        return HttpResponseForbidden()
+    events = Event.objects.all()
+    participants = User.objects.filter(rsvp_events__isnull=False).distinct()
+    categories = Category.objects.all()
+    return render(request, 'dashboards/admin_dashboard.html', {'events': events, 'participants': participants, 'categories': categories})
+
+@role_required('Organizer')
+def organizer_dashboard(request):
+    if not request.user.groups.filter(name='Organizer').exists():
+        return HttpResponseForbidden()
+    events = Event.objects.filter(organizer=request.user)
+    categories = Category.objects.all()
+    return render(request, 'dashboards/organizer_dashboard.html', {'events': events, 'categories': categories})
+
+@role_required('Participant')
+def participant_dashboard(request):
+    # show events this user RSVP'd to
+    events = request.user.rsvp_events.all()
+    return render(request, 'dashboards/participant_dashboard.html', {'events': events})
+
+

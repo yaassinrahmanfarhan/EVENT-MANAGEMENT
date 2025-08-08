@@ -7,7 +7,7 @@
         {% if form.instance.pk %}Update Event{% else %}Create New Event{% endif %}
     </h1>
 
-    <form method="post" class="bg-gray-800 p-8 rounded-lg shadow-lg text-white">
+    <form method="post" enctype="multipart/form-data" class="bg-gray-800 p-8 rounded-lg shadow-lg text-white">
         {% csrf_token %}
         {{ form.non_field_errors }}
         

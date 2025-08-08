@@ -1,35 +1,73 @@
 {% extends "Navbar&footer.html" %}
 {% block title %}Event Details{% endblock title %}
+
 {% block tasks %}
 
 <section class="py-8 px-4 max-w-6xl mx-auto">
     <h1 class="text-3xl font-bold text-white mb-6 text-center">Event Details</h1>
 
-
     <!-- Event Card -->
     <div class="bg-white rounded-lg shadow-lg overflow-hidden mb-12">
-        <img src="https://source.unsplash.com/random/800x400?event" class="w-full h-64 object-cover" alt="Event Image" />
+        {% if event.image %}
+            <img src="{{ event.image.url }}" alt="{{ event.name }}" class="w-full h-64 object-cover" />
+        {% else %}
+            <img src="https://source.unsplash.com/random/800x400?event" alt="Event Image" class="w-full h-64 object-cover" />
+        {% endif %}
 
         <div class="p-6">
             <h2 class="text-2xl font-bold mb-2">{{ event.name }}</h2>
-            <p class="text-gray-600 mb-4">Location: {{ event.location }}</p>
-            <p class="text-gray-600 mb-4">Date & Time: {{ event.date }} at {{ event.time }}</p>
+            <p class="text-gray-600 mb-4"><strong>Location:</strong> {{ event.location }}</p>
+            <p class="text-gray-600 mb-4"><strong>Date & Time:</strong> {{ event.date }} at {{ event.time }}</p>
             <p class="text-gray-700">{{ event.description }}</p>
         </div>
 
-        <!-- Placeholder Participants -->
-        <div class="bg-gray-100 p-6">
-  <h3 class="text-xl font-semibold mb-2">Participants</h3>
-  {% if event.participants.all %}
-    <ul class="list-disc list-inside text-gray-700">
-      {% for participant in event.participants.all %}
-        <li>{{ participant.name }}{% if participant.email %} ({{ participant.email }}){% endif %}</li>
-      {% endfor %}
-    </ul>
-  {% else %}
-    <p class="text-gray-600">No participants have joined this event yet.</p>
-  {% endif %}
-</div>
+        <!-- RSVP Section -->
+        <div class="bg-gray-50 p-6 border-t">
+            <h3 class="text-xl font-semibold mb-4">RSVP</h3>
+
+            {% if user.is_authenticated %}
+                {% if event.participant.filter(pk=user.pk).exists %}
+                    <!-- Cancel RSVP -->
+                    <form method="post" action="{% url 'cancel_rsvp_event' event.id %}">
+                        {% csrf_token %}
+                        <button class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded">
+                            Cancel RSVP
+                        </button>
+                    </form>
+                {% else %}
+                    <!-- RSVP Button -->
+                    <form method="post" action="{% url 'rsvp_event' event.id %}">
+                        {% csrf_token %}
+                        <button class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">
+                            RSVP Now
+                        </button>
+                    </form>
+                {% endif %}
+            {% else %}
+                <p class="text-yellow-600">
+                    Please <a href="{% url 'login' %}" class="underline">login</a> to RSVP.
+                </p>
+            {% endif %}
+        </div>
+
+        <!-- Participants List -->
+        <div class="bg-gray-100 p-6 border-t">
+            <h3 class="text-xl font-semibold mb-2">Participants</h3>
+            {% if event.participant.exists %}
+                <ul class="list-disc list-inside text-gray-700">
+                    {% for participant in event.participant.all %}
+                        <li>
+                            {{ participant.get_full_name|default:participant.username }}
+                            {% if participant.email %}
+                                <span class="text-gray-500">({{ participant.email }})</span>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="text-gray-600">No participants have joined this event yet.</p>
+            {% endif %}
+        </div>
     </div>
 </section>
 

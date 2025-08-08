@@ -1,5 +1,6 @@
 {% extends "Navbar&footer.html" %}
 {% block title %}Home Page{% endblock title %}
+
 {% block tasks %}
 <!-- Banner with Background Image -->
 <div class="relative bg-transparent h-screen w-full"> 
@@ -8,7 +9,7 @@
         <h1 class="text-white text-5xl font-extrabold mb-4 drop-shadow-lg">
             Welcome to <span class="text-blue-300">Event Management</span>
         </h1>
-         <p class="text-white mb-6 text-lg">Organize, Discover, and Participate in Events with Ease</p>
+        <p class="text-white mb-6 text-lg">Organize, Discover, and Participate in Events with Ease</p>
 
         <!-- Created by -->
         <div class="flex justify-center w-full mb-6">
@@ -18,13 +19,13 @@
         </div>
 
         <!-- Search Bar Form -->
-        <form method="get" action="{% url 'Home' %}" class="bg-gray-800 p-4 w-1/2 mx-auto rounded-lg shadow-lg opacity-75 mt-6">
+        <form method="get" action="{% url 'home' %}" class="bg-gray-800 p-4 w-full max-w-xl mx-auto rounded-lg shadow-lg opacity-75 mt-6">
             <div class="flex justify-center">
                 <input 
                     type="text" 
                     name="q" 
                     placeholder="Search events..." 
-                    value="{{ request.GET.q }}" 
+                    value="{{ query }}" 
                     class="px-4 py-2 rounded bg-gray-700 text-white w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
                 <button 
@@ -39,26 +40,29 @@
 </div>
 
 <!-- Event Section -->
-<section class="my-12 px-6">
+<section class="my-12 px-6 max-w-7xl mx-auto">
     <h2 class="text-3xl font-semibold text-center mb-8 text-white">Upcoming Events</h2>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
         {% for event in events %}
-        <div class="bg-white rounded-lg shadow-lg overflow-hidden">
-            <img src="{{ event.image_url }}" alt="{{ event.name }}" class="w-full h-48 object-cover" />
-            <div class="p-4">
+        <div class="bg-white rounded-lg shadow-lg overflow-hidden flex flex-col">
+            {% if event.image %}
+                <img src="{{ event.image.url }}" alt="{{ event.name }}" class="w-full h-48 object-cover" />
+            {% else %}
+                <img src="https://via.placeholder.com/400x300?text=No+Image" alt="No Image" class="w-full h-48 object-cover" />
+            {% endif %}
+            <div class="p-4 flex flex-col flex-grow">
                 <h3 class="text-xl font-semibold">{{ event.name }}</h3>
-                <p class="text-gray-700 mt-2">{{ event.description|truncatewords:20 }}</p>
-                <div class="flex justify-between items-center mt-4">
-                    <span class="text-gray-500">Participants: {{ event.participants.count }}</span>
-                    <span class="text-gray-500">Location: {{ event.location }}</span>
+                <p class="text-gray-700 mt-2 flex-grow">{{ event.description|truncatewords:20 }}</p>
+                <div class="flex justify-between items-center mt-4 text-sm text-gray-500">
+                    <span>Participants: {{ event.participant.count }}</span>
+                    <span>Location: {{ event.location }}</span>
                 </div>
-                <a href="{% url 'Event-details' event.id %}">
-                    <button class="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
+                <a href="{% url 'event_details' event.id %}" class="mt-4">
+                    <button class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
                         View Details
                     </button>
                 </a>
-                
             </div>
         </div>
         {% empty %}
@@ -66,5 +70,4 @@
         {% endfor %}
     </div>
 </section>
-
 {% endblock tasks %}
