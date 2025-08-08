@@ -1,42 +1,88 @@
-{% extends "nav&footer.html" %}
-
-{% block title %}Participant Dashboard{% endblock %}
+{% extends "base.html" %}
+{% block title %}Participant Dashboard{% endblock title %}
 
 {% block tasks %}
-<div class="container mx-auto px-4 py-6">
-    <h1 class="text-3xl font-bold text-white mb-6">Participant Dashboard</h1>
+<div class="px-6 py-10 max-w-7xl mx-auto text-white">
 
-    <!-- RSVP Events -->
-    <section class="bg-white rounded-lg shadow p-4">
-        <h2 class="text-xl font-semibold mb-4">Events You've RSVP'd To</h2>
-        {% if events %}
-            <div class="overflow-x-auto">
-                <table class="min-w-full table-auto border border-gray-200">
-                    <thead class="bg-gray-100">
-                        <tr>
-                            <th class="px-4 py-2 border">Name</th>
-                            <th class="px-4 py-2 border">Category</th>
-                            <th class="px-4 py-2 border">Date</th>
-                            <th class="px-4 py-2 border">Details</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for event in events %}
-                        <tr class="hover:bg-gray-50">
-                            <td class="px-4 py-2 border">{{ event.name }}</td>
-                            <td class="px-4 py-2 border">{{ event.category.name }}</td>
-                            <td class="px-4 py-2 border">{{ event.date|date:"M d, Y" }}</td>
-                            <td class="px-4 py-2 border">
-                                <a href="{% url 'event_detail' event.id %}" class="text-blue-500 hover:underline">View</a>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+    <!-- Page Title -->
+    <h1 class="text-4xl font-bold mb-8">Participant Dashboard</h1>
+
+    <!-- Stats -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-10">
+        <div class="bg-gray-800 rounded-lg shadow-lg p-6 text-center">
+            <h2 class="text-2xl font-bold">{{ total_registered_events }}</h2>
+            <p class="text-gray-400">Registered Events</p>
+        </div>
+        <div class="bg-gray-800 rounded-lg shadow-lg p-6 text-center">
+            <h2 class="text-2xl font-bold">{{ upcoming_events_count }}</h2>
+            <p class="text-gray-400">Upcoming</p>
+        </div>
+    </div>
+
+    <!-- Registered Events Table -->
+    <div class="bg-gray-900 rounded-lg shadow-lg overflow-hidden mb-10">
+        <h2 class="text-2xl font-semibold p-4 border-b border-gray-700">My Registered Events</h2>
+        <div class="overflow-x-auto">
+            <table class="min-w-full bg-gray-800 text-white">
+                <thead>
+                    <tr class="bg-gray-700">
+                        <th class="py-3 px-4 text-left">Event Name</th>
+                        <th class="py-3 px-4 text-left">Date</th>
+                        <th class="py-3 px-4 text-left">Location</th>
+                        <th class="py-3 px-4 text-left">Status</th>
+                        <th class="py-3 px-4 text-left">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for event in registered_events %}
+                    <tr class="border-b border-gray-700 hover:bg-gray-700">
+                        <td class="py-3 px-4">{{ event.name }}</td>
+                        <td class="py-3 px-4">{{ event.date|date:"M d, Y" }}</td>
+                        <td class="py-3 px-4">{{ event.location }}</td>
+                        <td class="py-3 px-4">
+                            {% if event.date >= today %}
+                                <span class="text-green-400">Upcoming</span>
+                            {% else %}
+                                <span class="text-gray-400">Past</span>
+                            {% endif %}
+                        </td>
+                        <td class="py-3 px-4 space-x-2">
+                            <a href="{% url 'event_details' event.id %}" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded transition">View</a>
+                            <a href="{% url 'unregister_event' event.id %}" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded transition" onclick="return confirm('Are you sure you want to unregister?')">Unregister</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center py-4 text-gray-400">You have not registered for any events yet.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Recommended Events -->
+    <div class="bg-gray-900 rounded-lg shadow-lg overflow-hidden">
+        <h2 class="text-2xl font-semibold p-4 border-b border-gray-700">Recommended Events</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
+            {% for event in recommended_events %}
+            <div class="bg-white rounded-lg shadow-lg overflow-hidden flex flex-col">
+                {% if event.image %}
+                    <img src="{{ event.image.url }}" alt="{{ event.name }}" class="w-full h-40 object-cover">
+                {% else %}
+                    <img src="https://via.placeholder.com/400x300?text=No+Image" alt="No Image" class="w-full h-40 object-cover">
+                {% endif %}
+                <div class="p-4 flex flex-col flex-grow">
+                    <h3 class="text-lg font-semibold text-gray-900">{{ event.name }}</h3>
+                    <p class="text-gray-700 mt-2 flex-grow">{{ event.description|truncatewords:15 }}</p>
+                    <a href="{% url 'event_details' event.id %}" class="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-center">View Details</a>
+                </div>
             </div>
-        {% else %}
-            <p class="text-gray-500">You haven't RSVP'd to any events yet.</p>
-        {% endif %}
-    </section>
+            {% empty %}
+            <p class="text-gray-400 col-span-full">No recommended events at the moment.</p>
+            {% endfor %}
+        </div>
+    </div>
+
 </div>
-{% endblock %}
+{% endblock tasks %}
