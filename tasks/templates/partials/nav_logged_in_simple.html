@@ -1,0 +1,16 @@
+<div class="flex space-x-4 items-center">
+    {% if is_admin %}
+        <a href="{% url 'admin_dashboard' %}" class="hover:text-blue-400">Admin Dashboard</a>
+    {% elif is_organizer %}
+        <a href="{% url 'organizer_dashboard' %}" class="hover:text-blue-400">Organizer Dashboard</a>
+    {% elif is_participant %}
+        <a href="{% url 'participant_dashboard' %}" class="hover:text-blue-400">Participant Dashboard</a>
+    {% endif %}
+    <a href="{% url 'about_us' %}" class="hover:text-blue-400">About Us</a>
+    <a href="{% url 'contact_us' %}" class="hover:text-blue-400">Contact</a>
+    <a href="{% url 'services' %}" class="hover:text-blue-400">Services</a>
+    <form method="POST" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit" class="hover:text-blue-400">Logout</button>
+    </form>
+</div>

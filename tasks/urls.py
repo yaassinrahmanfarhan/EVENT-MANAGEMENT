@@ -10,7 +10,7 @@ urlpatterns = [
     path('signup/', views.signup_view, name='signup'),
     path('activate/<uidb64>/<token>/', views.activate_account, name='activate_account'),
     path('login/', views.CustomLoginView.as_view(), name='login'),
-    path('logout/', auth_views.LogoutView.as_view(next_page='home'), name='logout'),
+    path('logout/', views.LogoutGetView.as_view(), name='logout'),
 
     # Dashboards by role
     path('dashboard/admin/', views.admin_dashboard, name='admin_dashboard'),
@@ -32,8 +32,8 @@ urlpatterns = [
     path('events/<int:pk>/delete/', views.event_delete, name='event_delete'),
 
     # RSVP (Participant only)
-    path('events/<int:event_id>/rsvp/', views.rsvp_event, name='rsvp_event'),
-    path('events/<int:event_id>/cancel-rsvp/', views.cancel_rsvp_event, name='cancel_rsvp_event'),
+    path('events/<int:event_id>/rsvp/', views.rsvp_event, name='join_event'),
+    path('events/<int:event_id>/cancel-rsvp/', views.cancel_rsvp_event, name='cancel_event'),
 
     # Category CRUD (Organizer & Admin)
     path('categories/', views.category_list, name='category_list'),
@@ -46,4 +46,10 @@ urlpatterns = [
     path('participants/create/', views.participant_create, name='participant_create'),
     path('participants/<int:pk>/update/', views.participant_update, name='participant_update'),
     path('participants/<int:pk>/delete/', views.participant_delete, name='participant_delete'),
+    
+    path('groups/', views.group_list, name='group_list'),
+    path('groups/create/', views.group_create, name='group_create'),
+    path('groups/<int:pk>/update/', views.group_update, name='group_update'),
+    path('groups/<int:pk>/delete/', views.group_delete, name='group_delete'),
+     path("manage-roles/", views.manage_roles, name="manage_roles"),
 ]

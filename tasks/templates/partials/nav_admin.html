@@ -1,0 +1,63 @@
+<nav class="bg-gray-900 px-6 py-3 shadow-lg">
+  <div class="flex items-center justify-between">
+    <div class="flex space-x-8 text-white font-medium items-center">
+
+      <!-- Manage roles -->
+      <a href="{% url 'manage_roles' %}" class="hover:text-blue-300 transition">Manage Roles</a>
+        
+      <!-- Event Menu -->
+      <div class="relative inline-block group" tabindex="0">
+        <button type="button" class="flex items-center px-2 py-1 hover:text-blue-300 transition focus:outline-none">
+          Events
+          <span class="ml-1 transform transition-transform group-hover:rotate-180 group-focus:rotate-180">▾</span>
+        </button>
+
+        <!-- note: top-full (no mt-gap) so mouse stays inside the group -->
+        <div class="absolute left-0 top-full hidden group-hover:block group-focus:block bg-gray-800 rounded shadow-lg min-w-[160px] z-50">
+          <a href="{% url 'event_list' %}" class="block px-4 py-2 hover:bg-gray-700">All Events</a>
+          <a href="{% url 'event_create' %}" class="block px-4 py-2 hover:bg-gray-700">Create Event</a>
+        </div>
+      </div>
+
+      <!-- Category Menu -->
+      <div class="relative inline-block group" tabindex="0">
+        <button type="button" class="flex items-center px-2 py-1 hover:text-blue-300 transition focus:outline-none">
+          Categories
+          <span class="ml-1 transform transition-transform group-hover:rotate-180 group-focus:rotate-180">▾</span>
+        </button>
+        <div class="absolute left-0 top-full hidden group-hover:block group-focus:block bg-gray-800 rounded shadow-lg min-w-[160px] z-50">
+          <a href="{% url 'category_list' %}" class="block px-4 py-2 hover:bg-gray-700">All Categories</a>
+          <a href="{% url 'category_create' %}" class="block px-4 py-2 hover:bg-gray-700">Add Category</a>
+        </div>
+      </div>
+
+      <!-- Participant Menu -->
+      <div class="relative inline-block group" tabindex="0">
+        <button type="button" class="flex items-center px-2 py-1 hover:text-blue-300 transition focus:outline-none">
+          Participants
+          <span class="ml-1 transform transition-transform group-hover:rotate-180 group-focus:rotate-180">▾</span>
+        </button>
+        <div class="absolute left-0 top-full hidden group-hover:block group-focus:block bg-gray-800 rounded shadow-lg min-w-[160px] z-50">
+          <a href="{% url 'participant_list' %}" class="block px-4 py-2 hover:bg-gray-700">All Participants</a>
+          <a href="{% url 'participant_create' %}" class="block px-4 py-2 hover:bg-gray-700">Add Participant</a>
+        </div>
+      </div>
+
+      <!-- Group Menu -->
+      <div class="relative inline-block group" tabindex="0">
+        <button type="button" class="flex items-center px-2 py-1 hover:text-blue-300 transition focus:outline-none">
+          Groups
+          <span class="ml-1 transform transition-transform group-hover:rotate-180 group-focus:rotate-180">▾</span>
+        </button>
+        <div class="absolute left-0 top-full hidden group-hover:block group-focus:block bg-gray-800 rounded shadow-lg min-w-[160px] z-50">
+          <a href="{% url 'group_list' %}" class="block px-4 py-2 hover:bg-gray-700">All Groups</a>
+          <a href="{% url 'group_create' %}" class="block px-4 py-2 hover:bg-gray-700">Add Group</a>
+        </div>
+      </div>
+
+      <!-- Logout -->
+      <a href="{% url 'logout' %}" class="hover:text-red-400 transition">Logout</a>
+
+    </div>
+  </div>
+</nav>

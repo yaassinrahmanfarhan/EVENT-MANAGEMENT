@@ -16,6 +16,12 @@ from django.contrib.auth.models import Group
 from django.http import HttpResponseForbidden
 from django.urls import reverse
 from .decorators import role_required
+from django.shortcuts import redirect
+from django.urls import reverse_lazy
+from django.views import View
+from django.contrib.auth import logout
+from .forms import CustomLoginForm
+from django.utils.timezone import now
 
 def Home_page(request):
     query = request.GET.get('q')
@@ -282,7 +288,7 @@ def signup_view(request):
             user.groups.add(participant_group)
             # signals will send activation email (post_save)
             messages.info(request, 'Registration successful. Please check your email to activate your account.')
-            return redirect('home')
+            return redirect('login')
     else:
         form = UserRegisterForm()
     return render(request, 'participants/participant_form.html', {'form': form})
@@ -290,7 +296,7 @@ def signup_view(request):
 
 class CustomLoginView(LoginView):
     template_name = 'accounts/login.html'
-    authentication_form = AuthenticationForm
+    authentication_form = CustomLoginForm
 
     def form_valid(self, form):
         user = form.get_user()
@@ -311,29 +317,97 @@ class CustomLoginView(LoginView):
 @login_required
 @role_required('Admin')
 def admin_dashboard(request):
-    # Only Admins
-    if not request.user.groups.filter(name='Admin').exists():
-        return HttpResponseForbidden()
-    events = Event.objects.all()
+    is_admin = request.user.groups.filter(name='Admin').exists()
+
+    # Events with participant prefetch for fewer DB queries
+    events = Event.objects.prefetch_related('participant').all()
+
+    # All users who RSVP'd to at least one event
     participants = User.objects.filter(rsvp_events__isnull=False).distinct()
+
+    # Categories
     categories = Category.objects.all()
-    return render(request, 'dashboards/admin_dashboard.html', {'events': events, 'participants': participants, 'categories': categories})
+
+    # Dynamic counts
+    total_events = events.count()
+    total_participants = User.objects.filter(groups__name='Participant').count()
+    total_organizers = User.objects.filter(groups__name='Organizer').count()
+
+    # Build recent participants list from Event M2M
+    recent_participants = []
+    for event in events:
+        for user in event.participant.all():
+            recent_participants.append({
+                'username': user.username,
+                'email': user.email,
+                'event_name': event.name,
+                'date_joined': event.created_at  # No join date stored, using event creation date as fallback
+            })
+
+    # Sort by date (newest first) and limit to latest 5
+    recent_participants = sorted(recent_participants, key=lambda x: x['date_joined'], reverse=True)[:5]
+
+    return render(
+        request,
+        'dashboards/admin_dashboard.html',
+        {
+            'events': events,
+            'participants': participants,
+            'categories': categories,
+            'is_admin': is_admin,
+            'total_events': total_events,
+            'total_participants': total_participants,
+            'total_organizers': total_organizers,
+            'recent_participants': recent_participants,
+        }
+    )
+
 
 @login_required
 @role_required('Organizer')
 def organizer_dashboard(request):
-    if not request.user.groups.filter(name='Organizer').exists():
+    is_organizer = request.user.groups.filter(name='Organizer').exists()
+
+    if not is_organizer:
         return HttpResponseForbidden()
+
     events = Event.objects.filter(organizer=request.user)
     categories = Category.objects.all()
-    return render(request, 'dashboards/organizer_dashboard.html', {'events': events, 'categories': categories})
+
+    return render(
+        request,
+        'dashboards/organizer_dashboard.html',
+        {
+            'events': events,
+            'categories': categories,
+            'is_organizer': is_organizer,
+        }
+    )
+
 
 @login_required
 @role_required('Participant')
 def participant_dashboard(request):
-    # show events this user RSVP'd to
-    events = request.user.rsvp_events.all()
-    return render(request, 'dashboards/participant_dashboard.html', {'events': events})
+    user = request.user
+    today = now().date()
+
+    registered_events = user.rsvp_events.all().order_by('date')
+
+    total_registered_events = registered_events.count()
+    upcoming_events_count = registered_events.filter(date__gte=today).count()
+
+    # Example logic for recommended events (customize as you want)
+    # For example: events user is NOT registered for and date in future
+    recommended_events = Event.objects.exclude(participant=user).filter(date__gte=today).order_by('date')[:6]
+
+    context = {
+        'registered_events': registered_events,
+        'total_registered_events': total_registered_events,
+        'upcoming_events_count': upcoming_events_count,
+        'recommended_events': recommended_events,
+        'today': today,
+    }
+    return render(request, 'dashboards/participant_dashboard.html', context)
 
 
 @login_required
@@ -379,4 +453,36 @@ def group_delete(request, pk):
         return redirect('group_list')
     return render(request, 'admin/group_confirm_delete.html', {'group': group})
 
+class LogoutGetView(View):
+    def post(self, request):  # Handle POST requests only
+        logout(request)
+        messages.success(request, "You have been logged out successfully.")
+        return redirect('home')  # Redirect after logout
 
+    def get(self, request):  # This could be used for other logic, but POST is recommended for logout.
+        return redirect('home')
+
+
+@login_required
+def manage_roles(request):
+    if not request.user.groups.filter(name='Admin').exists():
+        return HttpResponseForbidden("You do not have permission to access this page.")
+    
+    users = User.objects.exclude(id=request.user.id)  # Exclude current admin if you want
+    
+    if request.method == "POST":
+        user_id = request.POST.get("user_id")
+        new_role = request.POST.get("role")
+        
+        user = get_object_or_404(User, id=user_id)
+        
+        # Remove from all role groups first
+        user.groups.clear()
+        
+        # Add to the selected role group
+        group = Group.objects.get(name=new_role)
+        user.groups.add(group)
+        
+        return redirect("manage_roles")
+    
+    return render(request, "admin/manage_roles.html", {"users": users})

@@ -29,12 +29,25 @@
 
                 <div class="mt-8">
                     {% if user.is_authenticated %}
-                        <form method="post" action="{% url 'join_event' event.id %}">
-                            {% csrf_token %}
-                            <button type="submit" class="bg-blue-600 px-6 py-2 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                Join Event
-                            </button>
-                        </form>
+                        {% if not user.is_staff and not user.is_superuser and not user.is_organizer %}
+                            {% if user in event.participant.all %}
+                                <!-- Cancel RSVP Button -->
+                                <form method="post" action="{% url 'cancel_event' event.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="bg-red-600 px-6 py-2 rounded hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500">
+                                        Cancel RSVP
+                                    </button>
+                                </form>
+                            {% else %}
+                                <!-- Join Event Button -->
+                                <form method="post" action="{% url 'join_event' event.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="bg-blue-600 px-6 py-2 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                        Join Event
+                                    </button>
+                                </form>
+                            {% endif %}
+                        {% endif %}
                     {% else %}
                         <p class="text-gray-400">Please <a href="{% url 'login' %}" class="text-blue-300 underline">login</a> to join this event.</p>
                     {% endif %}

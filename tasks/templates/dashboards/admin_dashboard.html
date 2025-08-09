@@ -31,7 +31,6 @@
                 <thead>
                     <tr class="bg-gray-700">
                         <th class="py-3 px-4 text-left">Event Name</th>
-                        <th class="py-3 px-4 text-left">Organizer</th>
                         <th class="py-3 px-4 text-left">Date</th>
                         <th class="py-3 px-4 text-left">Location</th>
                         <th class="py-3 px-4 text-left">Participants</th>
@@ -41,7 +40,6 @@
                     {% for event in events %}
                     <tr class="border-b border-gray-700 hover:bg-gray-700">
                         <td class="py-3 px-4">{{ event.name }}</td>
-                        <td class="py-3 px-4">{{ event.organizer.username }}</td>
                         <td class="py-3 px-4">{{ event.date|date:"M d, Y" }}</td>
                         <td class="py-3 px-4">{{ event.location }}</td>
                         <td class="py-3 px-4">{{ event.participant.count }}</td>
@@ -56,36 +54,6 @@
         </div>
     </div>
 
-    <!-- Recent Participants Table -->
-    <div class="bg-gray-900 rounded-lg shadow-lg overflow-hidden">
-        <h2 class="text-2xl font-semibold p-4 border-b border-gray-700">Recent Participants</h2>
-        <div class="overflow-x-auto">
-            <table class="min-w-full bg-gray-800 text-white">
-                <thead>
-                    <tr class="bg-gray-700">
-                        <th class="py-3 px-4 text-left">Name</th>
-                        <th class="py-3 px-4 text-left">Email</th>
-                        <th class="py-3 px-4 text-left">Joined Event</th>
-                        <th class="py-3 px-4 text-left">Date Joined</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for participant in recent_participants %}
-                    <tr class="border-b border-gray-700 hover:bg-gray-700">
-                        <td class="py-3 px-4">{{ participant.user.username }}</td>
-                        <td class="py-3 px-4">{{ participant.user.email }}</td>
-                        <td class="py-3 px-4">{{ participant.event.name }}</td>
-                        <td class="py-3 px-4">{{ participant.date_joined|date:"M d, Y" }}</td>
-                    </tr>
-                    {% empty %}
-                    <tr>
-                        <td colspan="4" class="text-center py-4 text-gray-400">No participants found.</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </div>
 
 </div>
 {% endblock tasks %}

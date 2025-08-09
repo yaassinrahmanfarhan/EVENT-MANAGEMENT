@@ -1,0 +1,14 @@
+<div class="flex space-x-6 text-white">
+    <a href="{% url 'home' %}" class="hover:text-blue-300 transition">Home</a>
+    <a href="{% url 'organizer_dashboard' %}" class="hover:text-blue-300 transition">Dashboard</a>
+
+    <!-- Event Management -->
+    <a href="{% url 'event_list' %}" class="hover:text-blue-300 transition">My Events</a>
+    <a href="{% url 'event_create' %}" class="hover:text-blue-300 transition">Create Event</a>
+
+    <!-- Category Management -->
+    <a href="{% url 'category_list' %}" class="hover:text-blue-300 transition">Categories</a>
+    <a href="{% url 'category_create' %}" class="hover:text-blue-300 transition">Add Category</a>
+
+    <a href="{% url 'logout' %}" class="hover:text-red-400 transition">Logout</a>
+</div>

@@ -16,7 +16,7 @@ SECRET_KEY = config('SECRET_KEY')
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
-CSRF_TRUSTED_ORIGINS = ['http://*.onrender.com','https://*.onrender.com', 'http://127.0.0.1:8000']
+#CSRF_TRUSTED_ORIGINS = ['http://*.onrender.com','https://*.onrender.com', 'http://127.0.0.1:8000']
 
 # Application definition
 
@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     'users',
     'tasks',
     'debug_toolbar',
+    'widget_tweaks',
 ]
 
 MIDDLEWARE = [
@@ -61,6 +62,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'tasks.context_processors.user_roles',
             ],
         },
     },
@@ -141,7 +143,7 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # DEFAULT_FROM_EMAIL = 'noreply@example.com'
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = config('EMAIL_HOST', default='smtp.gmail.com')
+EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = config('EMAIL_PORT', default=587, cast=int)
 EMAIL_HOST_USER = config('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD= config('EMAIL_HOST_PASSWORD')

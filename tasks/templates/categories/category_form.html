@@ -1,33 +1,32 @@
-{% extends "Navbar&footer.html" %}
-
+{% extends "base.html" %}
+{% load widget_tweaks %}
+{% block title %}{{ form.instance.pk|yesno:"Edit Category,Add Category" }}{% endblock title %}
 {% block tasks %}
-<div class="max-w-xl mx-auto py-10">
-    <h2 class="text-2xl font-bold mb-6 text-center text-white">
-        {% if form.instance.pk %}Update{% else %}Add{% endif %} Category
-    </h2>
-
-    <form method="post" class="bg-gray-200 p-6 rounded shadow-md space-y-4">
+<section class="py-12 px-6 max-w-3xl mx-auto">
+    <h1 class="text-3xl font-bold text-white mb-6">
+        {{ form.instance.pk|yesno:"Edit Category,Add Category" }}
+    </h1>
+    <form method="post" class="bg-white bg-opacity-90 p-8 rounded-lg shadow-lg">
         {% csrf_token %}
         {{ form.non_field_errors }}
-        
-        <div>
-            <label class="block font-semibold mb-1" for="id_name">Name</label>
-            {{ form.name }}
-            {{ form.name.errors }}
+        {% for field in form %}
+        <div class="mb-4">
+            <label class="block text-gray-700 font-semibold mb-2">
+                {{ field.label }}
+            </label>
+            {{ field | add_class:"text-black" }}
+            {% if field.help_text %}
+            <p class="text-gray-500 text-xs">{{ field.help_text }}</p>
+            {% endif %}
+            {% if field.errors %}
+            <p class="text-red-500 text-sm mt-1">{{ field.errors|join:", " }}</p>
+            {% endif %}
         </div>
-
-        <div>
-            <label class="block font-semibold mb-1" for="id_description">Description</label>
-            {{ form.description }}
-            {{ form.description.errors }}
-        </div>
-
-        <div class="flex justify-between mt-6">
-            <a href="{% url 'category_list' %}" class="text-gray-600 hover:underline">← Back to List</a>
-            <button type="submit" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded">
-                {% if form.instance.pk %}Update{% else %}Create{% endif %}
-            </button>
-        </div>
+        {% endfor %}
+        <button type="submit"
+                class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded">
+            Save
+        </button>
     </form>
-</div>
-{% endblock %}
+</section>
+{% endblock tasks %}

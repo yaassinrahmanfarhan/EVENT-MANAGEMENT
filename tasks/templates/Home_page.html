@@ -48,7 +48,7 @@
                 <img src="https://via.placeholder.com/400x300?text=No+Image" alt="No Image" class="w-full h-48 object-cover" />
             {% endif %}
             <div class="p-4 flex flex-col flex-grow">
-                <h3 class="text-xl font-semibold">{{ event.name }}</h3>
+                <h3 class="text-xl font-semibold text-black">{{ event.name }}</h3>
                 <p class="text-gray-700 mt-2 flex-grow">{{ event.description|truncatewords:20 }}</p>
                 <div class="flex justify-between items-center mt-4 text-sm text-gray-500">
                     <span>Participants: {{ event.participant.count }}</span>

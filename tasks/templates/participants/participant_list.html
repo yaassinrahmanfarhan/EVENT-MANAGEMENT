@@ -1,51 +1,71 @@
-{% extends "Navbar&footer.html" %}
-
+{% extends "base.html" %}
+{% block title %}Participants{% endblock title %}
 {% block tasks %}
-<div class="max-w-6xl mx-auto p-6">
-    <h1 class="text-2xl font-bold mb-4 text-white">Participant List</h1>
-
-    <!-- Add Participant Button -->
-    <div class="mb-4">
-        <a href="{% url 'participant_create' %}" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-            + Add Participant
+<section class="py-12 px-6 max-w-7xl mx-auto">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-3xl font-bold text-white">All Participants</h1>
+        <a href="{% url 'participant_create' %}" 
+           class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow">
+           + Add Participant
         </a>
     </div>
 
-    <!-- Participants Table -->
+    <!-- Search -->
+    <form method="get" action="" class="mb-8 flex gap-2">
+        <input type="text" name="q" placeholder="Search participants..." 
+               value="{{ request.GET.q }}" 
+               class="px-4 py-2 rounded bg-gray-700 text-white w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <button type="submit" 
+                class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+            Search
+        </button>
+    </form>
+
+    <!-- Participant List -->
     <div class="overflow-x-auto">
-        <table class="w-full table-auto border-collapse border border-gray-200 bg-white">
-            <thead class="bg-gray-100">
+        <table class="min-w-full bg-white rounded-lg shadow-lg overflow-hidden">
+            <thead class="bg-gray-800 text-white">
                 <tr>
-                    <th class="border p-2 text-left">Name</th>
-                    <th class="border p-2 text-left">Email</th>
-                    <th class="border p-2 text-left">Events</th>
-                    <th class="border p-2 text-left">Actions</th>
+                    <th class="px-6 py-3 text-left">Name</th>
+                    <th class="px-6 py-3 text-left">Email</th>
+                    <th class="px-6 py-3 text-left">Phone</th>
+                    <th class="px-6 py-3 text-left">Events</th>
+                    <th class="px-6 py-3 text-right">Actions</th>
                 </tr>
             </thead>
             <tbody>
                 {% for participant in participants %}
-                    <tr class="border-b hover:bg-gray-50">
-                        <td class="border p-2">{{ participant.name }}</td>
-                        <td class="border p-2">{{ participant.email }}</td>
-                        <td class="border p-2">
-                            {% for event in participant.events.all %}
-                                <span class="inline-block bg-gray-200 px-2 py-1 rounded text-sm mr-1 mb-1">{{ event.name }}</span>
-                            {% empty %}
-                                <span class="text-gray-500">No events</span>
-                            {% endfor %}
-                        </td>
-                        <td class="border p-2 space-x-2">
-                            <a href="{% url 'participant_update' participant.pk %}" class="bg-yellow-400 text-white px-3 py-1 rounded hover:bg-yellow-500">Edit</a>
-                            <a href="{% url 'participant_delete' participant.pk %}" class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">Delete</a>
-                        </td>
-                    </tr>
+                <tr class="border-b hover:bg-gray-100 text-black">
+                    <td class="px-6 py-4">{{ participant.full_name }}</td>
+                    <td class="px-6 py-4">{{ participant.email }}</td>
+                    <td class="px-6 py-4">{{ participant.phone }}</td>
+                    <td class="px-6 py-4">
+                        {% for event in participant.events.all %}
+                            <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs">{{ event.name }}</span>
+                        {% empty %}
+                            <span class="text-gray-500 text-sm">No events</span>
+                        {% endfor %}
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                        <a href="{% url 'participant_update' participant.id %}" 
+                           class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded">
+                           Edit
+                        </a>
+                        <a href="{% url 'participant_delete' participant.id %}" 
+                           class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded">
+                           Delete
+                        </a>
+                    </td>
+                </tr>
                 {% empty %}
-                    <tr>
-                        <td colspan="4" class="text-center p-4 text-gray-500">No participants found.</td>
-                    </tr>
+                <tr>
+                    <td colspan="5" class="px-6 py-4 text-center text-gray-500">
+                        No participants found.
+                    </td>
+                </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
-</div>
-{% endblock %}
+</section>
+{% endblock tasks %}

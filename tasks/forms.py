@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import Group
 from .models import Event, Category
+from django.contrib.auth.forms import AuthenticationForm
 
 
 # Event Form
@@ -112,3 +113,17 @@ class GroupForm(forms.ModelForm):
     class Meta:
         model = Group
         fields = ['name']
+
+class CustomLoginForm(AuthenticationForm):
+    username = forms.CharField(
+        widget=forms.TextInput(attrs={
+            'class': 'text-black border border-gray-300 rounded w-full p-2 focus:outline-none focus:ring-2 focus:ring-blue-500',
+            'placeholder': 'Enter username',
+        })
+    )
+    password = forms.CharField(
+        widget=forms.PasswordInput(attrs={
+            'class': 'text-black border border-gray-300 rounded w-full p-2 focus:outline-none focus:ring-2 focus:ring-blue-500',
+            'placeholder': 'Enter password',
+        })
+    )

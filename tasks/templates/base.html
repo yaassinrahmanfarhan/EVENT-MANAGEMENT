@@ -1,30 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{% block title %}Event Management{% endblock title %}</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-900 text-white flex flex-col min-h-screen">
-
+<!-- Centered Messages -->
+    {% if messages %}
+    <div class="fixed inset-0 flex items-start justify-center pointer-events-none z-50 pt-24">
+        <div class="max-w-xl w-full px-6 py-4 rounded-lg text-center
+                    pointer-events-auto
+                    bg-white/10 backdrop-blur-sm
+                    text-white
+                    space-y-2">
+            {% for message in messages %}
+                <div class="px-4 py-2 rounded
+                    {% if message.tags == 'error' %}bg-red-600/70
+                    {% elif message.tags == 'success' %}bg-green-600/70
+                    {% else %}bg-blue-600/70{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
     <!-- Navbar -->
     <header class="bg-gray-800 shadow-md">
-        <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <nav class="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
             <div class="flex justify-between items-center h-16">
-                <a href="{% url 'home' %}" class="text-2xl font-bold text-blue-300 hover:text-blue-400 transition">
+                <!-- Logo / Brand -->
+                <a href="{% url 'home' %}" class="text-3xl font-extrabold text-blue-400 hover:text-blue-500 transition duration-300">
                     Event Management
                 </a>
-                <div class="flex space-x-6 text-white">
-                    <a href="{% url 'home' %}" class="hover:text-blue-300 transition">Home</a>
-                    <a href="{% url 'about_us' %}" class="hover:text-blue-300 transition">About</a>
-                    <a href="{% url 'services' %}" class="hover:text-blue-300 transition">Services</a>
-                    <a href="{% url 'contact_us' %}" class="hover:text-blue-300 transition">Contact</a>
-                    {% if user.is_authenticated %}
-                        <a href="{% url 'logout' %}" class="hover:text-red-400 transition">Logout</a>
+
+                <!-- Navigation Links -->
+                <div class="flex items-center space-x-6 text-lg font-medium">
+                    {% if request.path == '/' or request.path == '/home/' %}
+                        {# Home page nav #}
+                        {% if request.user.is_authenticated %}
+                            {% include "partials/nav_logged_in_simple.html" %}
+                        {% else %}
+                            {% include "partials/nav_logged_out_simple.html" %}
+                        {% endif %}
                     {% else %}
-                        <a href="{% url 'login' %}" class="hover:text-blue-300 transition">Login</a>
-                        <a href="{% url 'signup' %}" class="hover:text-blue-300 transition">Sign Up</a>
+                        {# Dashboard or other pages #}
+                        {% if request.user.is_authenticated %}
+                            {% if is_admin %}
+                                {% include "partials/nav_admin.html" %}
+                            {% elif is_organizer %}
+                                {% include "partials/nav_organizer.html" %}
+                            {% elif is_participant %}
+                                {% include "partials/nav_participant.html" %}
+                            {% else %}
+                                {% include "partials/nav_logged_in_simple.html" %}
+                            {% endif %}
+                        {% else %}
+                            {% include "partials/nav_logged_out_simple.html" %}
+                        {% endif %}
                     {% endif %}
                 </div>
             </div>
@@ -32,16 +66,32 @@
     </header>
 
     <!-- Page Content -->
-    <main class="flex-grow">
+    <main class="flex-grow max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-8">
         {% block tasks %}{% endblock tasks %}
     </main>
 
     <!-- Footer -->
     <footer class="bg-gray-800 text-gray-400 py-6 mt-12">
-        <div class="max-w-7xl mx-auto text-center">
+        <div class="max-w-7xl mx-auto text-center text-sm select-none">
             <p>&copy; {{ now|date:"Y" }} Event Management. All rights reserved.</p>
         </div>
     </footer>
-
+<script>
+  // Wait until the page loads
+  document.addEventListener('DOMContentLoaded', () => {
+    const messageContainer = document.querySelector('.fixed.inset-0.flex');
+    if (messageContainer) {
+      setTimeout(() => {
+        // Smooth fade out by reducing opacity
+        messageContainer.style.transition = 'opacity 0.5s ease';
+        messageContainer.style.opacity = '0';
+        // Remove the element after fade out finishes
+        setTimeout(() => {
+          messageContainer.remove();
+        }, 500);
+      }, 5000); // 5000 ms = 5 seconds
+    }
+  });
+</script>
 </body>
 </html>
