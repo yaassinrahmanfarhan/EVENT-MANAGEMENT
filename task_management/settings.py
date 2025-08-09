@@ -16,7 +16,7 @@ SECRET_KEY = config('SECRET_KEY')
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
-#CSRF_TRUSTED_ORIGINS = ['http://*.onrender.com','https://*.onrender.com', 'http://127.0.0.1:8000']
+CSRF_TRUSTED_ORIGINS = ['http://*.onrender.com','https://*.onrender.com', 'http://127.0.0.1:8000']
 
 # Application definition
 
@@ -74,16 +74,16 @@ WSGI_APPLICATION = 'task_management.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': config('DB_NAME',default='LOCALHOST'),
-#         'USER': config('DB_USER',default='postgres'),
-#         'PASSWORD': config('DB_PASSWORD',default=''),
-#         'HOST': config('DB_HOST',default='localhost'),
-#         'PORT': config('DB_PORT',default='5432'),
-#     }
-# }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': config('DB_NAME',default='LOCALHOST'),
+        'USER': config('DB_USER',default='postgres'),
+        'PASSWORD': config('DB_PASSWORD',default=''),
+        'HOST': config('DB_HOST',default='localhost'),
+        'PORT': config('DB_PORT',default='5432'),
+    }
+}
 
 
 # DATABASES = {

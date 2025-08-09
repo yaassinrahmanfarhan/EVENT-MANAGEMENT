@@ -322,7 +322,12 @@ def admin_dashboard(request):
     # Events with participant prefetch for fewer DB queries
     events = Event.objects.prefetch_related('participant').all()
 
-    # All users who RSVP'd to at least one event
+    # Unique participants across all events
+    total_participants = User.objects.filter(
+        id__in=Event.objects.values_list('participant', flat=True)
+    ).distinct().count()
+
+    # All users who RSVP'd to at least one event (optional)
     participants = User.objects.filter(rsvp_events__isnull=False).distinct()
 
     # Categories
@@ -330,7 +335,6 @@ def admin_dashboard(request):
 
     # Dynamic counts
     total_events = events.count()
-    total_participants = User.objects.filter(groups__name='Participant').count()
     total_organizers = User.objects.filter(groups__name='Organizer').count()
 
     # Build recent participants list from Event M2M
@@ -341,7 +345,7 @@ def admin_dashboard(request):
                 'username': user.username,
                 'email': user.email,
                 'event_name': event.name,
-                'date_joined': event.created_at  # No join date stored, using event creation date as fallback
+                'date_joined': event.created_at  # fallback
             })
 
     # Sort by date (newest first) and limit to latest 5
@@ -361,6 +365,7 @@ def admin_dashboard(request):
             'recent_participants': recent_participants,
         }
     )
+
 
 
 @login_required
