@@ -15,8 +15,7 @@ from .models import Event
 def send_activation_email(sender, instance, created, **kwargs):
     if created and not instance.is_active and instance.email:
         token = default_token_generator.make_token(instance)
-        uid = urlsafe_base64_encode(force_bytes(instance.pk))
-        activation_link = settings.SITE_URL + reverse('activate_account', kwargs={'uidb64': uid, 'token': token})
+        activation_link = settings.SITE_URL + reverse('activate_account', kwargs={'user_id': instance.id, 'token': token})
         subject = 'Activate Your Account'
         message = f'Hi {instance.username},\n\nPlease activate your account by clicking the link below:\n{activation_link}\n\nIf you did not register, please ignore this email.'
         send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [instance.email])
