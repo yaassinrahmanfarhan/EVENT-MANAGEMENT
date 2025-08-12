@@ -258,19 +258,11 @@ def category_delete(request, pk):
 
 #update
 
-<<<<<<< HEAD
 
 def activate_account(request, user_id, token):
     try:
         user = User.objects.get(id=user_id)
 
-=======
-# Activation view
-def activate_account(request, user_id, token):
-    try:
-        user = User.objects.get(id=user_id)
-
->>>>>>> cb88646099639313d41f30c2b55cf7407fa9c2d5
         if default_token_generator.check_token(user, token):
             user.is_active = True
             user.save()
@@ -283,10 +275,6 @@ def activate_account(request, user_id, token):
 
     except User.DoesNotExist:
         return HttpResponse('User not found')
-<<<<<<< HEAD
-=======
-    
->>>>>>> cb88646099639313d41f30c2b55cf7407fa9c2d5
 
 def signup_view(request):
     if request.method == 'POST':
