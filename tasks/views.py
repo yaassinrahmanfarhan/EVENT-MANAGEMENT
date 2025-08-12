@@ -261,25 +261,19 @@ def category_delete(request, pk):
 
 def activate_account(request, user_id, token):
     try:
-        # Retrieve the user by ID
         user = User.objects.get(id=user_id)
 
-        # Check if the provided token is valid for the user
         if default_token_generator.check_token(user, token):
-            # Activate the user
             user.is_active = True
             user.save()
 
-            # Send success message and redirect to sign-in page
             messages.success(request, 'Your account has been activated. You can now log in.')
             return redirect('login')
 
         else:
-            # Invalid token or user
             return HttpResponse('Invalid Id or token')
 
     except User.DoesNotExist:
-        # Handle case where user is not found
         return HttpResponse('User not found')
 
 def signup_view(request):
