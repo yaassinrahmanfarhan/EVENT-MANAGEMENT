@@ -259,20 +259,22 @@ def category_delete(request, pk):
 #update
 
 # Activation view
-def activate_account(request, uidb64, token):
+def activate_account(request, user_id, token):
     try:
-        uid = urlsafe_base64_decode(uidb64).decode()
-        user = User.objects.get(pk=uid)
-    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
-        user = None
+        user = User.objects.get(id=user_id)
 
-    if user and default_token_generator.check_token(user, token):
-        user.is_active = True
-        user.save()
-        messages.success(request, 'Your account has been activated. You can now log in.')
-        return redirect('login')
-    else:
-        return HttpResponse('Activation link is invalid or expired.', status=400)
+        if default_token_generator.check_token(user, token):
+            user.is_active = True
+            user.save()
+
+            messages.success(request, 'Your account has been activated. You can now log in.')
+            return redirect('login')
+
+        else:
+            return HttpResponse('Invalid Id or token')
+
+    except User.DoesNotExist:
+        return HttpResponse('User not found')
     
 
 def signup_view(request):
