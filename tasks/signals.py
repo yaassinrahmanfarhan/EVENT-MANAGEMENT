@@ -8,7 +8,7 @@ from django.conf import settings
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 
-from .models import Event
+from .models import Event, UserProfile
 
 # Activation email when user created (inactive)
 @receiver(post_save, sender=User)
@@ -34,3 +34,9 @@ def send_rsvp_confirmation_email(sender, instance, action, pk_set, **kwargs):
                     f'Date: {instance.date}\nLocation: {instance.location}\n\nThank you!'
                 )
                 send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [user.email])
+
+
+@receiver(post_save, sender=User)
+def create_or_update_user_profile(sender, instance, created, **kwargs):
+    if created:
+        UserProfile.objects.create(user=instance)

@@ -56,10 +56,10 @@ urlpatterns = [
 
     path('profile/', views.ProfileView.as_view(template_name='accounts/profile.html'), name='profile'),
     path('password-change/', views.ChangePassword.as_view(), name='password_change'),
-    # path('password-change/', PasswordChangeView.as_view(), name='password_change'),
     path('password-change/done/', PasswordChangeDoneView.as_view(
         template_name='accounts/password_change_done.html'), name='password_change_done'),
     path('password-reset/', views.CustomPasswordResetView.as_view(), name='password_reset'),
     path('password-reset/confirm/<uidb64>/<token>/',
-            views.CustomPasswordResetConfirmView.as_view(), name='password_reset_confirm')
+            views.CustomPasswordResetConfirmView.as_view(), name='password_reset_confirm'),
+    path('edit-profile/', views.EditProfileView.as_view(), name='edit_profile')
 ]

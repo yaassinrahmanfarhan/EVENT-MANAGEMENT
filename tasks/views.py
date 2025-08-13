@@ -5,8 +5,8 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate,login
 from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView
 from django.contrib.auth.decorators import login_required
-from .models import Event, Category
-from .forms import EventForm, UserRegisterForm, CategoryForm, GroupForm,CustomPasswordChangeForm,CustomPasswordResetForm,CustomPasswordResetConfirmForm
+from .models import Event, Category,UserProfile
+from .forms import EventForm, UserRegisterForm, CategoryForm, GroupForm,CustomPasswordChangeForm,CustomPasswordResetForm,CustomPasswordResetConfirmForm,EditProfileForm
 from django.contrib.auth.forms import AuthenticationForm
 from django.utils.http import urlsafe_base64_decode
 from django.contrib.auth.tokens import default_token_generator
@@ -22,7 +22,7 @@ from django.views import View
 from django.contrib.auth import logout
 from .forms import CustomLoginForm
 from django.utils.timezone import now
-from django.views.generic import TemplateView, ListView
+from django.views.generic import TemplateView, ListView, UpdateView
 from django.views import View
 from django.shortcuts import render
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -577,6 +577,8 @@ class ProfileView(TemplateView):
         context['username'] = user.username
         context['email'] = user.email
         context['name'] = user.get_full_name()
+        context['bio'] = user.userprofile.bio
+        context['profile_image'] = user.userprofile.profile_image
 
         context['member_since'] = user.date_joined
         context['last_login'] = user.last_login
@@ -616,3 +618,31 @@ class CustomPasswordResetConfirmView(PasswordResetConfirmView):
         messages.success(
             self.request, 'Password reset successfully')
         return super().form_valid(form)
+    
+
+class EditProfileView(UpdateView):
+    model = User
+    form_class = EditProfileForm
+    template_name = 'accounts/update_profile.html'
+    context_object_name = 'form'
+
+    def get_object(self):
+        return self.request.user
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['userprofile'] = UserProfile.objects.get(user=self.request.user)
+        return kwargs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user_profile = UserProfile.objects.get(user=self.request.user)
+        print("views", user_profile)
+        context['form'] = self.form_class(
+            instance=self.object, userprofile=user_profile)
+        return context
+
+    def form_valid(self, form):
+        form.save(commit=True)
+        return redirect('profile')
+
