@@ -3,7 +3,7 @@ from django.core.exceptions import ValidationError
 from django.utils import timezone
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import Group, Permission
 from .models import Event, Category
 from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm, PasswordResetForm, SetPasswordForm
 from django.contrib.auth.password_validation import password_validators_help_texts
@@ -118,9 +118,16 @@ class CategoryForm(forms.ModelForm):
         return name
 
 class GroupForm(forms.ModelForm):
+    permissions = forms.ModelMultipleChoiceField(
+        queryset=Permission.objects.all(),
+        widget=forms.CheckboxSelectMultiple,
+        required=False,
+        label="Permissions"
+    )
+
     class Meta:
         model = Group
-        fields = ['name']
+        fields = ['name', 'permissions']
 
 class CustomLoginForm(AuthenticationForm):
     username = forms.CharField(

@@ -2,61 +2,62 @@
 {% block title %}Groups{% endblock title %}
 {% block tasks %}
 <section class="py-12 px-6 max-w-7xl mx-auto">
-    <div class="flex justify-between items-center mb-6">
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-8">
         <h1 class="text-3xl font-bold text-white">All User Groups</h1>
         <a href="{% url 'group_create' %}"
-           class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow">
-           + Add Group
+           class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg shadow-md transition">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                 viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M12 4v16m8-8H4"/>
+            </svg>
+            Add Group
         </a>
     </div>
 
-    <!-- Search -->
-    <form method="get" action="" class="mb-8 flex gap-2">
-        <input type="text" name="q" placeholder="Search groups..."
-               value="{{ request.GET.q }}"
-               class="px-4 py-2 rounded bg-gray-700 text-white w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
-        <button type="submit"
-                class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-            Search
-        </button>
-    </form>
-
     <!-- Groups Table -->
-    <div class="overflow-x-auto">
-        <table class="min-w-full bg-white rounded-lg shadow-lg overflow-hidden">
+    <div class="overflow-x-auto rounded-lg shadow-lg border border-gray-200 text-black">
+        <table class="min-w-full bg-white">
             <thead class="bg-gray-800 text-white">
                 <tr>
-                    <th class="px-6 py-3 text-left">Group Name</th>
-                    <th class="px-6 py-3 text-left">Permissions</th>
-                    <th class="px-6 py-3 text-right">Actions</th>
+                    <th class="px-6 py-3 text-left text-sm font-semibold">Group Name</th>
+                    <th class="px-6 py-3 text-left text-sm font-semibold">Permissions</th>
+                    <th class="px-6 py-3 text-right text-sm font-semibold">Actions</th>
                 </tr>
             </thead>
             <tbody>
                 {% for group in groups %}
-                <tr class="border-b hover:bg-gray-100 text-black">
-                    <td class="px-6 py-4">{{ group.name }}</td>
-                    <td class="px-6 py-4 text-gray-700">
+                <tr class="border-b hover:bg-gray-50 transition">
+                    <!-- Group Name -->
+                    <td class="px-6 py-4 font-medium">{{ group.name }}</td>
+
+                    <!-- Permissions -->
+                    <td class="px-6 py-4 text-gray-700 text-sm">
                         {% if group.permissions.all %}
                             {{ group.permissions.all|join:", " }}
                         {% else %}
-                            <span class="text-gray-500">No permissions assigned</span>
+                            <span class="text-gray-400 italic">No permissions assigned</span>
                         {% endif %}
                     </td>
-                    <td class="px-6 py-4 text-right">
+
+                    <!-- Actions -->
+                    <td class="px-6 py-4 text-right space-x-2">
                         <a href="{% url 'group_update' group.id %}"
-                           class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded">
-                           Edit
+                           class="inline-flex items-center gap-1 bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1.5 rounded-lg shadow-sm text-sm transition">
+                            ✏️ Edit
                         </a>
                         <a href="{% url 'group_delete' group.id %}"
-                           class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded">
-                           Delete
+                           class="inline-flex items-center gap-1 bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-lg shadow-sm text-sm transition"
+                           onclick="return confirm('Are you sure you want to delete this group?');">
+                            🗑 Delete
                         </a>
                     </td>
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="3" class="px-6 py-4 text-center text-gray-500">
-                        No groups found.
+                    <td colspan="3" class="px-6 py-6 text-center text-gray-500 text-sm">
+                        No groups found. Click <a href="{% url 'group_create' %}" class="text-blue-600 hover:underline">here</a> to create one.
                     </td>
                 </tr>
                 {% endfor %}

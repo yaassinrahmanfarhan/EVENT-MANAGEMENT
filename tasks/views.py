@@ -530,8 +530,10 @@ def group_create(request):
     if request.method == 'POST':
         form = GroupForm(request.POST)
         if form.is_valid():
-            form.save()
-            messages.success(request, "Group created successfully.")
+            group = form.save(commit=False)
+            group.save()
+            form.save_m2m()  # Saves the permissions relation
+            messages.success(request, "Group created successfully with permissions.")
             return redirect('group_list')
     else:
         form = GroupForm()
