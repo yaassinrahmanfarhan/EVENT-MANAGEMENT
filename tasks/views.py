@@ -21,8 +21,8 @@ from django.urls import reverse_lazy
 from django.views import View
 from django.contrib.auth import logout
 from .forms import CustomLoginForm
-from django.utils.timezone import now
-from django.views.generic import TemplateView, ListView, UpdateView
+from django.utils.timezone import now,localdate
+from django.views.generic import TemplateView, ListView, UpdateView, DetailView
 from django.views import View
 from django.shortcuts import render
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -30,6 +30,7 @@ from django.db.models import Q
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.contrib.auth.views import LoginView, PasswordChangeView,PasswordResetView,PasswordResetConfirmView
+from datetime import date
 
 def Home_page(request):
     query = request.GET.get('q')
@@ -41,10 +42,15 @@ def Home_page(request):
     return render(request, 'Home_page.html', {'events': events, 'query': query})
 
 
-def Event_details_view(request, event_id):
-    event = get_object_or_404(Event, id=event_id)
-    return render(request, 'Event_details.html', {'event': event})
+# def Event_details_view(request, event_id):
+#     event = get_object_or_404(Event, id=event_id)
+#     return render(request, 'Event_details.html', {'event': event})
 
+class Event_details_view(DetailView):
+    model = Event
+    template_name = 'Event_details.html'
+    context_object_name = 'event'
+    pk_url_kwarg = 'event_id'
 
 # def Contact_us_view(request):
 #     return render(request, 'Contact_us.html')
@@ -379,28 +385,31 @@ class CustomLoginView(LoginView):
     
 @login_required
 @role_required('Admin')
+@login_required
+@role_required('Admin')
 def admin_dashboard(request):
     is_admin = request.user.groups.filter(name='Admin').exists()
 
-    # Events with participant prefetch for fewer DB queries
     events = Event.objects.prefetch_related('participant').all()
+
+    # --- Event categorization ---
+    today = localdate()  # use local date instead of timezone.now().date()
+    past_events = events.filter(date__lt=today).order_by('-date')
+    todays_events = events.filter(date=today).order_by('date')
+    upcoming_events = events.filter(date__gt=today).order_by('date')
 
     # Unique participants across all events
     total_participants = User.objects.filter(
         id__in=Event.objects.values_list('participant', flat=True)
     ).distinct().count()
 
-    # All users who RSVP'd to at least one event (optional)
     participants = User.objects.filter(rsvp_events__isnull=False).distinct()
-
-    # Categories
     categories = Category.objects.all()
 
-    # Dynamic counts
     total_events = events.count()
     total_organizers = User.objects.filter(groups__name='Organizer').count()
 
-    # Build recent participants list from Event M2M
+    # Recent participants
     recent_participants = []
     for event in events:
         for user in event.participant.all():
@@ -408,17 +417,22 @@ def admin_dashboard(request):
                 'username': user.username,
                 'email': user.email,
                 'event_name': event.name,
-                'date_joined': event.created_at  # fallback
+                'date_joined': event.created_at
             })
-
-    # Sort by date (newest first) and limit to latest 5
-    recent_participants = sorted(recent_participants, key=lambda x: x['date_joined'], reverse=True)[:5]
+    recent_participants = sorted(
+        recent_participants,
+        key=lambda x: x['date_joined'],
+        reverse=True
+    )[:5]
 
     return render(
         request,
         'dashboards/admin_dashboard.html',
         {
             'events': events,
+            'past_events': past_events,
+            'todays_events': todays_events,
+            'upcoming_events': upcoming_events,
             'participants': participants,
             'categories': categories,
             'is_admin': is_admin,
@@ -435,22 +449,37 @@ def admin_dashboard(request):
 @role_required('Organizer')
 def organizer_dashboard(request):
     is_organizer = request.user.groups.filter(name='Organizer').exists()
-
     if not is_organizer:
         return HttpResponseForbidden()
 
-    events = Event.objects.filter(organizer=request.user)
+    # Show all events (like admin)
+    events = Event.objects.prefetch_related('participant').all()
     categories = Category.objects.all()
+
+    today = localdate()  # <-- use localdate() instead of timezone.now().date()
+    
+    past_events = events.filter(date__lt=today).order_by('-date')
+    todays_events = events.filter(date=today).order_by('date')
+    upcoming_events = events.filter(date__gt=today).order_by('date')
+
+    total_events = events.count()
+    total_participants = sum([e.participant.count() for e in events])
 
     return render(
         request,
         'dashboards/organizer_dashboard.html',
         {
             'events': events,
+            'past_events': past_events,
+            'todays_events': todays_events,
+            'upcoming_events': upcoming_events,
             'categories': categories,
             'is_organizer': is_organizer,
+            'total_events': total_events,
+            'total_participants': total_participants,
         }
     )
+
 
 
 @login_required
@@ -579,6 +608,7 @@ class ProfileView(TemplateView):
         context['name'] = user.get_full_name()
         context['bio'] = user.userprofile.bio
         context['profile_image'] = user.userprofile.profile_image
+        context['phone_number'] = user.userprofile.phone_number
 
         context['member_since'] = user.date_joined
         context['last_login'] = user.last_login
@@ -636,13 +666,11 @@ class EditProfileView(UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        user_profile = UserProfile.objects.get(user=self.request.user)
-        print("views", user_profile)
-        context['form'] = self.form_class(
-            instance=self.object, userprofile=user_profile)
+        context['user_profile'] = UserProfile.objects.get(user=self.request.user)
         return context
 
     def form_valid(self, form):
         form.save(commit=True)
         return redirect('profile')
+
 

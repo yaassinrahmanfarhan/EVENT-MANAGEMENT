@@ -7,7 +7,7 @@
         {{ form.instance.pk|yesno:"Edit Participant,Add Participant" }}
     </h1>
     <form method="post" enctype="multipart/form-data" 
-          class="bg-white bg-opacity-90 p-8 rounded-lg shadow-lg">
+          class="bg-white bg-opacity-90 p-8 rounded-lg shadow-lg text-black">
         {% csrf_token %}
         {{ form.non_field_errors }}
         {% for field in form %}

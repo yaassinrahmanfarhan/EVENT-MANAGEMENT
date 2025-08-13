@@ -106,8 +106,15 @@ class CategoryForm(forms.ModelForm):
 
     def clean_name(self):
         name = self.cleaned_data.get('name')
-        if Category.objects.filter(name__iexact=name).exists():
+        qs = Category.objects.filter(name__iexact=name)
+
+    # Exclude the current instance from the check
+        if self.instance.pk:
+            qs = qs.exclude(pk=self.instance.pk)
+
+        if qs.exists():
             raise ValidationError("A category with this name already exists.")
+
         return name
 
 class GroupForm(forms.ModelForm):
@@ -196,26 +203,24 @@ class EditProfileForm(StyledFormMixin, forms.ModelForm):
 
     bio = forms.CharField(required=False, widget=forms.Textarea, label='Bio')
     profile_image = forms.ImageField(required=False, label='Profile Image')
+    phone_number = forms.CharField(required=False, max_length=15, label='Phone Number') 
 
     def __init__(self, *args, **kwargs):
         self.userprofile = kwargs.pop('userprofile', None)
         super().__init__(*args, **kwargs)
-        print("forms", self.userprofile)
-
-        # Todo: Handle Error
 
         if self.userprofile:
             self.fields['bio'].initial = self.userprofile.bio
             self.fields['profile_image'].initial = self.userprofile.profile_image
+            self.fields['phone_number'].initial = self.userprofile.phone_number
 
     def save(self, commit=True):
         user = super().save(commit=False)
 
-        # Save userProfile jodi thake
         if self.userprofile:
             self.userprofile.bio = self.cleaned_data.get('bio')
-            self.userprofile.profile_image = self.cleaned_data.get(
-                'profile_image')
+            self.userprofile.profile_image = self.cleaned_data.get('profile_image')
+            self.userprofile.phone_number = self.cleaned_data.get('phone_number')
 
             if commit:
                 self.userprofile.save()
