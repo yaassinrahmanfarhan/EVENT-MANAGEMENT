@@ -5,7 +5,8 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import Group
 from .models import Event, Category
-from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm, PasswordResetForm, SetPasswordForm
+from django.contrib.auth.password_validation import password_validators_help_texts
 
 
 # Event Form
@@ -127,3 +128,56 @@ class CustomLoginForm(AuthenticationForm):
             'placeholder': 'Enter password',
         })
     )
+
+class StyledFormMixin:
+    """
+    Mixin to automatically apply Tailwind CSS styling and placeholders 
+    to Django form fields for a consistent and user-friendly UI.
+    """
+
+    # Default classes for most input fields
+    default_classes = (
+        "border-2 border-gray-300 w-full p-3 rounded-lg shadow-sm "
+        "focus:outline-none focus:border-rose-500 focus:ring-rose-500"
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.apply_styled_widgets()
+
+    def apply_styled_widgets(self):
+        for field_name, field in self.fields.items():
+            widget = field.widget
+
+            # Determine placeholder text if not explicitly set
+            placeholder = widget.attrs.get('placeholder', f"Enter {field.label.lower()}")
+
+            # Apply styling based on widget type
+            if isinstance(widget, (forms.TextInput, forms.EmailInput, forms.PasswordInput)):
+                widget.attrs.update({
+                    'class': self.default_classes,
+                    'placeholder': placeholder
+                })
+            elif isinstance(widget, forms.Textarea):
+                widget.attrs.update({
+                    'class': f"{self.default_classes} resize-none",
+                    'placeholder': placeholder,
+                    'rows': 5
+                })
+            elif isinstance(widget, forms.SelectDateWidget):
+                widget.attrs.update({
+                    'class': self.default_classes
+                })
+            elif isinstance(widget, forms.CheckboxSelectMultiple):
+                widget.attrs.update({
+                    'class': "space-y-2"
+                })
+            else:
+                # Fallback for other widgets
+                widget.attrs.update({
+                    'class': self.default_classes,
+                    'placeholder': placeholder
+                })
+
+class CustomPasswordChangeForm(StyledFormMixin,PasswordChangeForm):
+    pass

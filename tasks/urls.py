@@ -1,6 +1,7 @@
 from django.urls import path
 from . import views
 from django.contrib.auth import views as auth_views
+from django.contrib.auth.views import LogoutView, PasswordChangeView, PasswordChangeDoneView
 
 urlpatterns = [
     path('', views.Home_page, name='home'),
@@ -52,4 +53,10 @@ urlpatterns = [
     path('groups/<int:pk>/update/', views.group_update, name='group_update'),
     path('groups/<int:pk>/delete/', views.group_delete, name='group_delete'),
      path("manage-roles/", views.manage_roles, name="manage_roles"),
+
+    path('profile/', views.ProfileView.as_view(template_name='accounts/profile.html'), name='profile'),
+    path('password-change/', views.ChangePassword.as_view(), name='password_change'),
+    # path('password-change/', PasswordChangeView.as_view(), name='password_change'),
+    path('password-change/done/', PasswordChangeDoneView.as_view(
+        template_name='accounts/password_change_done.html'), name='password_change_done'),
 ]

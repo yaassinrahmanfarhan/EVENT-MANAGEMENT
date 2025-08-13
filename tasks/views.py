@@ -6,7 +6,7 @@ from django.contrib.auth import authenticate,login
 from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView
 from django.contrib.auth.decorators import login_required
 from .models import Event, Category
-from .forms import EventForm, UserRegisterForm, CategoryForm, GroupForm
+from .forms import EventForm, UserRegisterForm, CategoryForm, GroupForm,CustomPasswordChangeForm
 from django.contrib.auth.forms import AuthenticationForm
 from django.utils.http import urlsafe_base64_decode
 from django.contrib.auth.tokens import default_token_generator
@@ -29,6 +29,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db.models import Q
 from django.utils import timezone
 from django.utils.decorators import method_decorator
+from django.contrib.auth.views import LoginView, PasswordChangeView
 
 def Home_page(request):
     query = request.GET.get('q')
@@ -564,3 +565,24 @@ def manage_roles(request):
         return redirect("manage_roles")
     
     return render(request, "admin/manage_roles.html", {"users": users})
+
+
+class ProfileView(TemplateView):
+    template_name = 'accounts/profile.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+
+        context['username'] = user.username
+        context['email'] = user.email
+        context['name'] = user.get_full_name()
+
+        context['member_since'] = user.date_joined
+        context['last_login'] = user.last_login
+        return context
+
+
+class ChangePassword(PasswordChangeView):
+    template_name = 'accounts/password_change.html'
+    form_class = CustomPasswordChangeForm
