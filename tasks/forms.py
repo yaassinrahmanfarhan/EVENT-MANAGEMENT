@@ -181,3 +181,9 @@ class StyledFormMixin:
 
 class CustomPasswordChangeForm(StyledFormMixin,PasswordChangeForm):
     pass
+
+class CustomPasswordResetForm(StyledFormMixin, PasswordResetForm):
+    pass
+
+class CustomPasswordResetConfirmForm(StyledFormMixin, SetPasswordForm):
+    pass
