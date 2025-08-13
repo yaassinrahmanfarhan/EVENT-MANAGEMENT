@@ -22,6 +22,13 @@ from django.views import View
 from django.contrib.auth import logout
 from .forms import CustomLoginForm
 from django.utils.timezone import now
+from django.views.generic import TemplateView, ListView
+from django.views import View
+from django.shortcuts import render
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.db.models import Q
+from django.utils import timezone
+from django.utils.decorators import method_decorator
 
 def Home_page(request):
     query = request.GET.get('q')
@@ -38,16 +45,25 @@ def Event_details_view(request, event_id):
     return render(request, 'Event_details.html', {'event': event})
 
 
-def Contact_us_view(request):
-    return render(request, 'Contact_us.html')
+# def Contact_us_view(request):
+#     return render(request, 'Contact_us.html')
+
+class Contact_us_view(TemplateView):
+    template_name = 'Contact_us.html'
 
 
-def About_us_view(request):
-    return render(request, 'About_us.html')
+# def About_us_view(request):
+#     return render(request, 'About_us.html')
+
+class About_us_view(TemplateView):
+    template_name = 'About_us.html'
 
 
-def Services_view(request):
-    return render(request, 'Services.html')
+# def Services_view(request):
+#     return render(request, 'Services.html')
+
+class Services_view(TemplateView):
+    template_name = 'Services.html'
 
 
 def dashboard(request):
@@ -80,27 +96,53 @@ def dashboard(request):
     })
 
 
-def event_list(request):
-    events = Event.objects.select_related('category').prefetch_related('participant')
+# def event_list(request):
+#     events = Event.objects.select_related('category').prefetch_related('participant')
 
-    category_id = request.GET.get('category')
-    start_date = request.GET.get('start_date')
-    end_date = request.GET.get('end_date')
-    search = request.GET.get('search')
+#     category_id = request.GET.get('category')
+#     start_date = request.GET.get('start_date')
+#     end_date = request.GET.get('end_date')
+#     search = request.GET.get('search')
 
-    if category_id:
-        events = events.filter(category_id=category_id)
+#     if category_id:
+#         events = events.filter(category_id=category_id)
 
-    if start_date and end_date:
-        events = events.filter(date__range=[start_date, end_date])
+#     if start_date and end_date:
+#         events = events.filter(date__range=[start_date, end_date])
 
-    if search:
-        events = events.filter(Q(name__icontains=search) | Q(location__icontains=search))
+#     if search:
+#         events = events.filter(Q(name__icontains=search) | Q(location__icontains=search))
 
-    return render(request, 'events/event_list.html', {
-        'events': events,
-        'categories': Category.objects.all()
-    })
+#     return render(request, 'events/event_list.html', {
+#         'events': events,
+#         'categories': Category.objects.all()
+#     })
+
+class event_list(ListView):
+    model = Event
+    template_name = 'events/event_list.html'
+    context_object_name = 'events'
+
+    def get_queryset(self):
+        events = Event.objects.select_related('category').prefetch_related('participant')
+        category_id = self.request.GET.get('category')
+        start_date = self.request.GET.get('start_date')
+        end_date = self.request.GET.get('end_date')
+        search = self.request.GET.get('search')
+
+        if category_id:
+            events = events.filter(category_id=category_id)
+        if start_date and end_date:
+            events = events.filter(date__range=[start_date, end_date])
+        if search:
+            events = events.filter(Q(name__icontains=search) | Q(location__icontains=search))
+
+        return events
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['categories'] = Category.objects.all()
+        return context
 
 @login_required
 @role_required('Admin', 'Organizer')
@@ -171,11 +213,25 @@ def cancel_rsvp_event(request, event_id):
         messages.warning(request, "You had not RSVP'd to this event.")
     return redirect('event_details', event_id=event.id)
 
-@login_required
-@role_required('Admin')
-def participant_list(request):
-    participants = User.objects.prefetch_related('rsvp_events')
-    return render(request, 'participants/participant_list.html', {'participants': participants})
+# @login_required
+# @role_required('Admin')
+# def participant_list(request):
+#     participants = User.objects.prefetch_related('rsvp_events')
+#     return render(request, 'participants/participant_list.html', {'participants': participants})
+
+@method_decorator(login_required, name='dispatch')
+@method_decorator(role_required('Admin'), name='dispatch')
+class participant_list(LoginRequiredMixin, UserPassesTestMixin, ListView):
+    model = User
+    template_name = 'participants/participant_list.html'
+    context_object_name = 'participants'
+
+    def get_queryset(self):
+        return User.objects.prefetch_related('rsvp_events')
+
+    def test_func(self):
+        return self.request.user.groups.filter(name='Admin').exists()
+
 
 @login_required
 @role_required('Admin')
@@ -217,9 +273,14 @@ def participant_delete(request, pk):
     return render(request, 'participants/participant_confirm_delete.html', {'participant': user})
 
 
-def category_list(request):
-    categories = Category.objects.all()
-    return render(request, 'categories/category_list.html', {'categories': categories})
+# def category_list(request):
+#     categories = Category.objects.all()
+#     return render(request, 'categories/category_list.html', {'categories': categories})
+
+class category_list(ListView):
+    model = Category
+    template_name = 'categories/category_list.html'
+    context_object_name = 'categories'
 
 @login_required
 @role_required('Admin', 'Organizer')
@@ -416,11 +477,22 @@ def participant_dashboard(request):
     return render(request, 'dashboards/participant_dashboard.html', context)
 
 
-@login_required
-@role_required('Admin')
-def group_list(request):
-    groups = Group.objects.all()
-    return render(request, 'admin/group_list.html', {'groups': groups})
+# @login_required
+# @role_required('Admin')
+# def group_list(request):
+#     groups = Group.objects.all()
+#     return render(request, 'admin/group_list.html', {'groups': groups})
+
+@method_decorator(login_required, name='dispatch')
+@method_decorator(role_required('Admin'), name='dispatch')
+class group_list(LoginRequiredMixin, UserPassesTestMixin, ListView):
+    model = Group
+    template_name = 'admin/group_list.html'
+    context_object_name = 'groups'
+
+    def test_func(self):
+        return self.request.user.groups.filter(name='Admin').exists()
+
 
 @login_required
 @role_required('Admin')

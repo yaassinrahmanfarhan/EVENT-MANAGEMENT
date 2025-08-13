@@ -18,12 +18,12 @@ urlpatterns = [
     path('dashboard/participant/', views.participant_dashboard, name='participant_dashboard'),
 
     # Public pages
-    path('contact/', views.Contact_us_view, name='contact_us'),
-    path('about/', views.About_us_view, name='about_us'),
-    path('services/', views.Services_view, name='services'),
+    path('contact/', views.Contact_us_view.as_view(), name='contact_us'),
+    path('about/', views.About_us_view.as_view(), name='about_us'),
+    path('services/', views.Services_view.as_view(), name='services'),
 
     # Event details and list
-    path('events/', views.event_list, name='event_list'),
+    path('events/', views.event_list.as_view(), name='event_list'),
     path('events/<int:event_id>/', views.Event_details_view, name='event_details'),
 
     # Event CRUD (Organizer & Admin)
@@ -36,18 +36,18 @@ urlpatterns = [
     path('events/<int:event_id>/cancel-rsvp/', views.cancel_rsvp_event, name='cancel_event'),
 
     # Category CRUD (Organizer & Admin)
-    path('categories/', views.category_list, name='category_list'),
+    path('categories/', views.category_list.as_view(), name='category_list'),
     path('categories/create/', views.category_create, name='category_create'),
     path('categories/<int:pk>/update/', views.category_update, name='category_update'),
     path('categories/<int:pk>/delete/', views.category_delete, name='category_delete'),
 
     # Participant management (Admin only)
-    path('participants/', views.participant_list, name='participant_list'),
+    path('participants/', views.participant_list.as_view(), name='participant_list'),
     path('participants/create/', views.participant_create, name='participant_create'),
     path('participants/<int:pk>/update/', views.participant_update, name='participant_update'),
     path('participants/<int:pk>/delete/', views.participant_delete, name='participant_delete'),
     
-    path('groups/', views.group_list, name='group_list'),
+    path('groups/', views.group_list.as_view(), name='group_list'),
     path('groups/create/', views.group_create, name='group_create'),
     path('groups/<int:pk>/update/', views.group_update, name='group_update'),
     path('groups/<int:pk>/delete/', views.group_delete, name='group_delete'),
