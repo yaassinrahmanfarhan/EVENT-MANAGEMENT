@@ -3,31 +3,39 @@
 
 {% block tasks %}
 <!-- Banner Section -->
-<div class="relative bg-transparent h-screen w-full"> 
+<div class="relative bg-transparent h-screen w-full">
     <div class="absolute inset-0 flex flex-col justify-center items-center text-center px-6">
-        <h1 class="text-white text-5xl font-extrabold mb-4 drop-shadow-lg">
+        <!-- Title with icon -->
+        <h1 class="text-white text-5xl font-extrabold mb-4 drop-shadow-lg flex items-center gap-3">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-blue-400" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2a9 9 0 0 0-9 9v5l-2 2v1h22v-1l-2-2v-5a9 9 0 0 0-9-9Z"/>
+            </svg>
             Welcome to <span class="text-blue-300">Event Management</span>
         </h1>
-        <p class="text-white mb-6 text-lg">Organize, Discover, and Participate in Events with Ease</p>
+
+        <p class="text-white mb-6 text-lg">🎉 Organize, Discover, and Participate in Events with Ease</p>
 
         <div class="flex justify-center w-full mb-6">
-            <p class="text-white text-sm">Created By Farhan</p>
+            <p class="text-white text-sm">✨ Created By Farhan</p>
         </div>
 
         <!-- Search Bar -->
-        <form method="get" action="{% url 'home' %}" class="bg-gray-800 p-4 w-full max-w-xl mx-auto rounded-lg shadow-lg opacity-75 mt-6">
-            <div class="flex justify-center">
+        <form method="get" action="{% url 'home' %}" class="bg-gray-800 p-4 w-full max-w-xl mx-auto rounded-lg shadow-lg opacity-90 mt-6">
+            <div class="flex justify-center items-center">
                 <input 
                     type="text" 
                     name="q" 
-                    placeholder="Search events..." 
+                    placeholder="🔍 Search events..." 
                     value="{{ query }}" 
                     class="px-4 py-2 rounded bg-gray-700 text-white w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
                 <button 
                     type="submit" 
-                    class="ml-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    class="ml-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center gap-1"
                 >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1 0 6.65 6.65a7.5 7.5 0 0 0 10.6 10.6Z"/>
+                    </svg>
                     Search
                 </button>
             </div>
@@ -37,32 +45,55 @@
 
 <!-- Event Section -->
 <section class="my-12 px-6 max-w-7xl mx-auto">
-    <h2 class="text-3xl font-semibold text-center mb-8 text-white">Upcoming Events</h2>
+    <h2 class="text-3xl font-semibold text-center mb-8 text-white flex items-center justify-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-yellow-400" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 2l2.39 7.26H22l-6.18 4.49L17.82 22 12 17.77 6.18 22l1.99-8.25L2 9.26h7.61z"/>
+        </svg>
+        Upcoming Events
+    </h2>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
         {% for event in events %}
-        <div class="bg-white rounded-lg shadow-lg overflow-hidden flex flex-col">
+        <div class="bg-white rounded-lg shadow-lg overflow-hidden flex flex-col transition transform hover:scale-105">
             {% if event.image %}
                 <img src="{{ event.image.url }}" alt="{{ event.name }}" class="w-full h-48 object-cover" />
             {% else %}
                 <img src="https://via.placeholder.com/400x300?text=No+Image" alt="No Image" class="w-full h-48 object-cover" />
             {% endif %}
             <div class="p-4 flex flex-col flex-grow">
-                <h3 class="text-xl font-semibold text-black">{{ event.name }}</h3>
+                <h3 class="text-xl font-semibold text-black flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-red-500" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 7a5 5 0 1 1-5 5 5 5 0 0 1 5-5Z"/>
+                    </svg>
+                    {{ event.name }}
+                </h3>
                 <p class="text-gray-700 mt-2 flex-grow">{{ event.description|truncatewords:20 }}</p>
                 <div class="flex justify-between items-center mt-4 text-sm text-gray-500">
-                    <span>Participants: {{ event.participant.count }}</span>
-                    <span>Location: {{ event.location }}</span>
+                    <span class="flex items-center gap-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M16 14a4 4 0 1 1-8 0V7h8Z"/>
+                        </svg>
+                        {{ event.participant.count }}
+                    </span>
+                    <span class="flex items-center gap-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-purple-500" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7Z"/>
+                        </svg>
+                        {{ event.location }}
+                    </span>
                 </div>
                 <a href="{% url 'event_details' event.id %}" class="mt-4">
-                    <button class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
+                    <button class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full flex items-center justify-center gap-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+                        </svg>
                         View Details
                     </button>
                 </a>
             </div>
         </div>
         {% empty %}
-        <p class="text-white text-center col-span-full">No events found.</p>
+        <p class="text-white text-center col-span-full">🚫 No events found.</p>
         {% endfor %}
     </div>
 </section>
