@@ -14,13 +14,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ["127.0.0.1", "localhost", os.getenv('RENDER_EXTERNAL_HOSTNAME')]
-CSRF_TRUSTED_ORIGINS = [
-    'http://127.0.0.1:8000',  # local dev
-    f"https://{os.getenv('RENDER_EXTERNAL_HOSTNAME', '')}"  # Render prod
-]
+ALLOWED_HOSTS = ['*']
+CSRF_TRUSTED_ORIGINS = ['http://*.onrender.com','https://*.onrender.com', 'http://127.0.0.1:8000']
 
 # Application definition
 
