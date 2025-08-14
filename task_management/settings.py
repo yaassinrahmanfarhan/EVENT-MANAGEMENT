@@ -1,6 +1,7 @@
 from pathlib import Path
 from decouple import config
 import dj_database_url
+import os 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -13,10 +14,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['*']
-CSRF_TRUSTED_ORIGINS = ['http://*.onrender.com','https://*.onrender.com', 'http://127.0.0.1:8000']
+ALLOWED_HOSTS = ["127.0.0.1", "localhost", os.getenv('RENDER_EXTERNAL_HOSTNAME')]
+CSRF_TRUSTED_ORIGINS = [
+    'http://127.0.0.1:8000',  # local dev
+    f"https://{os.getenv('RENDER_EXTERNAL_HOSTNAME', '')}"  # Render prod
+]
 
 # Application definition
 
@@ -157,4 +161,12 @@ EMAIL_HOST_PASSWORD= config('EMAIL_HOST_PASSWORD')
 EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=True, cast=bool)
 
 
-SITE_URL = 'http://127.0.0.1:8000'
+# Detect if we're on Render (Render sets this environment variable automatically)
+ON_RENDER = os.getenv('RENDER', False)
+
+if ON_RENDER:
+    # Use your live Render URL
+    SITE_URL = f"https://{os.getenv('RENDER_EXTERNAL_HOSTNAME')}"
+else:
+    # Local development
+    SITE_URL = "http://127.0.0.1:8000"

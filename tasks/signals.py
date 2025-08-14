@@ -15,9 +15,17 @@ from .models import Event, UserProfile
 def send_activation_email(sender, instance, created, **kwargs):
     if created and not instance.is_active and instance.email:
         token = default_token_generator.make_token(instance)
-        activation_link = settings.SITE_URL + reverse('activate_account', kwargs={'user_id': instance.id, 'token': token})
+
+        # Use SITE_URL from settings (which we made dynamic in settings.py)
+        activation_link = f"{settings.SITE_URL}{reverse('activate_account', kwargs={'user_id': instance.id, 'token': token})}"
+
         subject = 'Activate Your Account'
-        message = f'Hi {instance.username},\n\nPlease activate your account by clicking the link below:\n{activation_link}\n\nIf you did not register, please ignore this email.'
+        message = (
+            f"Hi {instance.username},\n\n"
+            f"Please activate your account by clicking the link below:\n{activation_link}\n\n"
+            "If you did not register, please ignore this email."
+        )
+
         send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [instance.email])
 
 # RSVP confirmation email when user added to event participants
